@@ -1,0 +1,50 @@
+{
+  "name": "tvk-technologies-training-portal",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "TVK Technologies - Full-Stack Training & Placement Portal built with Angular 18 and Express.js",
+  "scripts": {
+    "ng": "ng",
+
+    "frontend:build": "ng build",
+    "frontend:dev": "ng serve --proxy-config proxy.conf.json --open",
+
+    "backend:build": "backend\\apache-maven-3.9.6\\bin\\mvn.cmd -f backend/pom.xml package -DskipTests",
+    "backend:start": "java -jar backend/target/tvk-portal.jar",
+    "backend:dev": "backend\\apache-maven-3.9.6\\bin\\mvn.cmd -f backend/pom.xml spring-boot:run",
+
+    "build": "npm run frontend:build && npm run backend:build",
+    "start": "npm run backend:start",
+    "dev": "start npm run frontend:dev && npm run backend:dev",
+
+    "clean": "rd /s /q dist 2>nul & backend\\apache-maven-3.9.6\\bin\\mvn.cmd -f backend/pom.xml clean",
+    "lint": "ng lint"
+  },
+  "dependencies": {
+    "@angular/animations": "^18.0.0",
+    "@angular/common": "^18.0.0",
+    "@angular/compiler": "^18.0.0",
+    "@angular/core": "^18.0.0",
+    "@angular/forms": "^18.0.0",
+    "@angular/platform-browser": "^18.0.0",
+    "@angular/platform-browser-dynamic": "^18.0.0",
+    "@angular/router": "^18.0.0",
+    "express": "^4.21.2",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.6.0",
+    "zone.js": "^0.14.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^18.0.0",
+    "@angular/cli": "^18.0.0",
+    "@angular/compiler-cli": "^18.0.0",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.21.0",
+    "typescript": "5.5.4"
+  }
+}

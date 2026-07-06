@@ -1,0 +1,171 @@
+{
+  "users": [
+    {
+      "id": "u-admin",
+      "name": "Global Registrar",
+      "email": "admin@tvktechs.com",
+      "role": "admin",
+      "createdAt": "2026-06-22T10:36:05.837Z"
+    },
+    {
+      "id": "u-trainer1",
+      "name": "Mr. Satish Raghavan (Sr. Java Architect)",
+      "email": "trainer.java@tvktechs.com",
+      "role": "trainer",
+      "createdAt": "2026-06-22T10:36:05.838Z"
+    },
+    {
+      "id": "u-trainer2",
+      "name": "Ms. Priyanka Sen (Frontend UX Specialist)",
+      "email": "trainer.angular@tvktechs.com",
+      "role": "trainer",
+      "createdAt": "2026-06-22T10:36:05.838Z"
+    },
+    {
+      "id": "u-student1",
+      "name": "Rahul Bose",
+      "email": "rahul.b@gmail.com",
+      "role": "student",
+      "createdAt": "2026-06-22T10:36:05.838Z",
+      "contactNum": "1234567895",
+      "paymentStatus": "unpaid",
+      "batchNumber": "01",
+      "assignedTrainer": "neha",
+      "approvalStatus": "pending"
+    },
+    {
+      "id": "u-student2",
+      "name": "Ananya Rao",
+      "email": "ananya.r@gmail.com",
+      "role": "student",
+      "createdAt": "2026-06-22T10:36:05.838Z"
+    }
+  ],
+  "courses": [
+    {
+      "id": "c-java-fullstack",
+      "title": "Java with Angular: Professional Full Stack Developer",
+      "description": "Our premier training & placement program. Master high-performance Java frameworks paired with Angular enterprise SPA architecture.",
+      "duration": "12 Weeks (Weekend & Weekday Batches)",
+      "trainerName": "Mr. Satish Raghavan & Ms. Priyanka Sen",
+      "features": [
+        "100% Job Confirmation Guarantee",
+        "Expert Trainer & Placement Support",
+        "Resume Building & Mock Interviews",
+        "Real-Time Live Projects"
+      ],
+      "syllabus": [
+        "Core Java (OOPs, Collections, Exceptions, Multithreading, Streams)",
+        "Advanced Java (JDBC, Hibernate ORM, SQL Databases)",
+        "Spring Boot & RESTful APIs Microservice Architecture",
+        "Angular 17+ Essentials (Components, RxJS Routing, HTTP Client)",
+        "Git, GitHub & Cloud CI/CD Deployment Practice"
+      ],
+      "capacity": 30,
+      "enrolledCount": 12,
+      "isLive": true,
+      "price": "$299 (Flexible EMI Options)",
+      "batches": [
+        "Weekend Batch (10 AM - 2 PM)",
+        "Weekday Batch (7 AM - 9 AM)"
+      ]
+    },
+    {
+      "id": "c-spring-micro",
+      "title": "Enterprise Spring Boot & Microservices",
+      "description": "Deep dive into production-grade microservices with Spring Cloud, OAuth2, and scalable Docker container deployments.",
+      "duration": "6 Weeks",
+      "trainerName": "Mr. Satish Raghavan",
+      "features": [
+        "Advanced Concepts",
+        "API Gateway & Security",
+        "Doubt Slay Sessions"
+      ],
+      "syllabus": [
+        "Spring Boot Configuration & Spring Data JPA",
+        "Microservices Core principles (Eureka, Spring Cloud Gateway)",
+        "Security & Authentication with JWT and OAuth2",
+        "Kafka/RabbitMQ Messaging Systems",
+        "Kubernetes & Docker Deployment"
+      ],
+      "capacity": 25,
+      "enrolledCount": 8,
+      "isLive": true,
+      "price": "$199"
+    },
+    {
+      "id": "c-angular-pro",
+      "title": "Angular 17+ Modern Web Applications",
+      "description": "Master modern reactive web architecture using standalone components, RxJS, NgRx, and server-side pre-rendering.",
+      "duration": "6 Weeks",
+      "trainerName": "Ms. Priyanka Sen",
+      "features": [
+        "Reactive Architecture",
+        "Mock Interview Training",
+        "Real-Time Project Support"
+      ],
+      "syllabus": [
+        "Standalone Components & Signals Control State",
+        "Advanced Routers & Guard Interceptors",
+        "RxJS Observables Flow & Reactive Forms",
+        "State Management with NgRx Store",
+        "Optimizing Performance & Accessibility"
+      ],
+      "capacity": 25,
+      "enrolledCount": 9,
+      "isLive": true,
+      "price": "$149"
+    }
+  ],
+  "enrollments": [
+    {
+      "id": "e1",
+      "courseId": "c-java-fullstack",
+      "courseTitle": "Java with Angular: Professional Full Stack Developer",
+      "studentId": "u-student1",
+      "studentName": "Rahul Bose",
+      "studentEmail": "rahul.b@gmail.com",
+      "status": "active",
+      "registeredAt": "2026-06-17T10:36:05.838Z",
+      "progress": 45,
+      "grade": "A",
+      "feedback": "Demonstrates exceptional understanding of database schemas and Spring JPA queries."
+    },
+    {
+      "id": "e2",
+      "courseId": "c-angular-pro",
+      "courseTitle": "Angular 17+ Modern Web Applications",
+      "studentId": "u-student2",
+      "studentName": "Ananya Rao",
+      "studentEmail": "ananya.r@gmail.com",
+      "status": "active",
+      "registeredAt": "2026-06-20T10:36:05.838Z",
+      "progress": 20,
+      "feedback": "Responsive components are fully functional. Keep up the high dedication!"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "cnt1",
+      "name": "Karan Johar",
+      "email": "karan.j@gmail.com",
+      "phone": "+91 9876543210",
+      "subject": "Queries on Job Placement Assistance",
+      "message": "Hi TVK Techs, I graduated from BE in 2024. Can I apply for the Java with Angular Training? Please let me know how the placement assurance program works.",
+      "status": "read",
+      "createdAt": "2026-06-22T10:36:05.838Z"
+    }
+  ],
+  "systemLog": [
+    {
+      "time": "2026-06-23T04:15:08.750Z",
+      "event": "USER_MUTATED",
+      "detail": "Broadcast transmitted: {\"user\":{\"id\":\"u-student1\",\"name\":\"Rahul Bose\",\"email\":\"rahul.b@gmail.com\",\"role\":\"student\",\"created..."
+    },
+    {
+      "time": "2026-06-22T10:36:05.838Z",
+      "event": "SYSTEM_INITIALIZED",
+      "detail": "TVK Technologies Realtime Platform booted successfully on local storage."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+<div class="space-y-8 animate-fade-in font-sans">
+  <!-- Contact Form Section -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Get in Touch</h1>
+    <p class="text-gray-600 mb-8">
+      Have questions? Our admissions team is here to help.
+    </p>
+
+    <form (ngSubmit)="submitForm()" class="space-y-4">
+      <!-- Name -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-900 mb-1">Full Name</label>
+        <input [(ngModel)]="formData.name" name="name" type="text" placeholder="Your name"
+          class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-semibold text-slate-900 mb-1">Email Address</label>
+        <input [(ngModel)]="formData.email" name="email" type="email" placeholder="your@email.com"
+          class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <!-- Phone -->
+      <div>
+        <label class="block text-sm font-semibold text-slate-900 mb-1">Phone Number</label>
+        <input [(ngModel)]="formData.phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX"
+          class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <!-- Subject -->
+      <div>
+        <label class="block text-sm font-semibold text-slate-900 mb-1">Subject</label>
+        <input [(ngModel)]="formData.subject" name="subject" type="text" placeholder="What's this about?"
+          class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <!-- Message -->
+      <div>
+        <label class="block text-sm font-semibold text-slate-900 mb-1">Message</label>
+        <textarea [(ngModel)]="formData.message" name="message" rows="5" placeholder="Tell us more..."
+          class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" [disabled]="isSubmitting"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all disabled:bg-gray-400">
+        {{ isSubmitting ? "Sending..." : "Send Message" }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Contact Info -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
+      <div class="text-3xl mb-2">📧</div>
+      <h3 class="font-bold text-gray-900 mb-1">Email</h3>
+      <p class="text-gray-600 text-sm">contact{{ "@" }}tvktraining.com</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-center">
+      <div class="text-3xl mb-2">📞</div>
+      <h3 class="font-bold text-slate-900 mb-1">Phone</h3>
+      <p class="text-slate-600 text-sm">+91 9876 543 210</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 text-center">
+      <div class="text-3xl mb-2">📍</div>
+      <h3 class="font-bold text-slate-900 mb-1">Office</h3>
+      <p class="text-slate-600 text-sm">Chennai & Bangalore, India</p>
+    </div>
+  </div>
+
+</div>

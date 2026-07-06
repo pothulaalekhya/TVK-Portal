@@ -1,0 +1,790 @@
+<div class="space-y-8 animate-fade-in font-sans">
+  <!-- Not Logged In State -->
+  <div *ngIf="!currentUser"
+    class="bg-white border border-slate-100 rounded-3xl p-12 text-center shadow-xl max-w-xl mx-auto space-y-6">
+    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto text-blue-600 text-3xl font-bold shadow-inner">
+      🔑
+    </div>
+    <div>
+      <h2 class="text-2xl font-black text-slate-900 tracking-tight">Authentication Required</h2>
+      <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+        Please log in or register a new training account to access your personalized learning portal, progress updates, and course catalogs.
+      </p>
+    </div>
+  </div>
+
+  <!-- Logged In State -->
+  <div *ngIf="currentUser" class="space-y-8">
+    <!-- User Profile Header -->
+    <div class="relative bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl overflow-hidden shadow-2xl p-8 border border-indigo-500/15 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div class="space-y-3">
+        <span class="inline-flex items-center gap-1.5 bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-indigo-400/25">
+          👤 {{ currentUser.role | uppercase }} PORTAL
+        </span>
+        <h1 class="text-3xl font-black tracking-tight leading-none text-white">Welcome back, {{ currentUser.name }}!</h1>
+        <p class="text-slate-300 text-sm font-medium">Registered Email: <span class="text-indigo-200">{{ currentUser.email }}</span></p>
+      </div>
+      <div class="bg-white/10 px-4 py-3.5 rounded-2xl border border-white/10 backdrop-blur-md text-right text-xs">
+        <span class="block text-white/50 uppercase tracking-wider font-bold">Registered Date</span>
+        <strong class="block text-sm text-amber-300 font-black mt-1">{{ currentUser.createdAt | date: 'MMM dd, yyyy' }}</strong>
+      </div>
+    </div>
+
+    <!-- ==================== STUDENT DASHBOARD ==================== -->
+    <div *ngIf="currentUser.role === 'student'" class="space-y-8 animate-fade-in">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between min-h-[120px]">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Enrollments</span>
+          <span class="text-4xl font-black text-blue-600 mt-2">{{ userEnrollments.length }}</span>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between min-h-[120px]">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Modules</span>
+          <span class="text-4xl font-black text-emerald-600 mt-2">{{ getActiveCount() }}</span>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between min-h-[120px]">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Completed</span>
+          <span class="text-4xl font-black text-indigo-600 mt-2">{{ getCompletedCount() }}</span>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between min-h-[120px]">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Average Progress</span>
+          <div class="flex items-baseline gap-1 mt-2">
+            <span class="text-4xl font-black text-amber-500">{{ getAverageProgress() }}</span>
+            <span class="text-sm font-bold text-slate-400">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8">
+        <div class="mb-6">
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">Your Enrolled Batches</h2>
+          <p class="text-xs text-slate-400 mt-1">Real-time status of your course syllabus and instructor grade reports</p>
+        </div>
+
+        <div *ngIf="userEnrollments.length === 0" class="text-center py-12 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50 space-y-3">
+          <span class="text-3xl block">📚</span>
+          <h3 class="font-bold text-slate-800">No Course Registrations Found</h3>
+          <p class="text-xs text-slate-500 max-w-sm mx-auto">
+            You haven't enrolled in any training programs yet. Explore our latest batches and secure your placement!
+          </p>
+          <a routerLink="/courses" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition mt-2">
+            Browse Courses
+          </a>
+        </div>
+
+        <!-- Student Enrollment Filter Tabs -->
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">Filter:</span>
+          <button (click)="studentStatusFilter = 'all'" [class]="'px-3.5 py-1.5 text-xs font-bold rounded-full border transition-all ' + (studentStatusFilter === 'all' ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-400 hover:text-indigo-600')">
+            All <span class="ml-1 opacity-70">({{ userEnrollments.length }})</span>
+          </button>
+          <button (click)="studentStatusFilter = 'active'" [class]="'px-3.5 py-1.5 text-xs font-bold rounded-full border transition-all ' + (studentStatusFilter === 'active' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-400 hover:text-emerald-600')">
+            🟢 Active
+          </button>
+          <button (click)="studentStatusFilter = 'pending'" [class]="'px-3.5 py-1.5 text-xs font-bold rounded-full border transition-all ' + (studentStatusFilter === 'pending' ? 'bg-amber-500 text-white border-amber-500 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-amber-400 hover:text-amber-600')">
+            🟡 Pending
+          </button>
+          <button (click)="studentStatusFilter = 'completed'" [class]="'px-3.5 py-1.5 text-xs font-bold rounded-full border transition-all ' + (studentStatusFilter === 'completed' ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400 hover:text-blue-600')">
+            ✅ Completed
+          </button>
+        </div>
+
+        <div *ngIf="filteredUserEnrollments.length === 0 && userEnrollments.length > 0" class="text-center py-8 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50 space-y-2">
+          <span class="text-2xl block">🔍</span>
+          <p class="text-sm font-bold text-slate-700">No enrollments match your filter</p>
+          <button (click)="studentStatusFilter = 'all'" class="text-xs text-blue-600 hover:underline font-bold">Clear filter</button>
+        </div>
+
+        <div *ngIf="filteredUserEnrollments.length > 0" class="grid grid-cols-1 gap-6">
+          <div *ngFor="let enrollment of filteredUserEnrollments"
+            class="border border-slate-100 bg-slate-50/20 rounded-2xl p-6 hover:shadow-md transition-all flex flex-col gap-5">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="text-lg font-black text-slate-900 tracking-tight">{{ enrollment.courseTitle }}</h3>
+                <p class="text-xs text-slate-400 mt-1">Enrolled: {{ enrollment.registeredAt | date: 'MMM dd, yyyy' }}</p>
+              </div>
+              <span [class]="'text-xs font-bold px-3 py-1 rounded-full ' + getStatusBadgeClass(enrollment.status)">
+                {{ enrollment.status | uppercase }}
+              </span>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex justify-between items-end">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Curriculum Progress</span>
+                <span class="text-lg font-black text-blue-600">{{ enrollment.progress }}%</span>
+              </div>
+              <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200/50">
+                <div [class]="'h-full rounded-full transition-all duration-700 ' + getProgressColor(enrollment.progress)"
+                  [style.width.%]="enrollment.progress"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 pt-4 mt-2">
+              <div class="bg-white p-4 rounded-xl border border-slate-100">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Evaluation Grade</span>
+                <strong class="block text-xl font-black text-slate-900 mt-1">{{ enrollment.grade || 'Awaiting Evaluator' }}</strong>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-slate-100">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Instructor Performance Feedback</span>
+                <p class="text-xs font-medium text-slate-600 mt-1 leading-relaxed italic">
+                  "{{ enrollment.feedback || 'Your assignments are under review. Keep up the code practice!' }}"
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TRAINER DASHBOARD ==================== -->
+    <div *ngIf="currentUser.role === 'trainer'" class="space-y-8 animate-fade-in">
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight">Active Student Registry</h2>
+            <p class="text-xs text-slate-400 mt-1">Review student progress reports, assign performance grades, and write feedback logs</p>
+          </div>
+          <button type="button" (click)="toggleTrainerFilter()"
+            class="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-slate-200 border border-slate-200/50 transition-all">
+            {{ filterTrainerOnly ? 'Displaying: My Assigned Batches Only' : 'Displaying: All Academic Batches' }}
+          </button>
+        </div>
+
+        <!-- Trainer Search & Filter Bar -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-5 p-4 bg-slate-50/70 rounded-2xl border border-slate-100">
+          <div class="relative flex-1">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+            <input
+              type="text"
+              [(ngModel)]="trainerSearchQuery"
+              placeholder="Search student name, email, or course..."
+              id="trainer-search-input"
+              class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition"
+            />
+          </div>
+          <select [(ngModel)]="trainerStatusFilter" id="trainer-status-filter" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition">
+            <option value="all">All Statuses</option>
+            <option value="active">🟢 Active</option>
+            <option value="pending">🟡 Pending</option>
+            <option value="completed">✅ Completed</option>
+          </select>
+          <button (click)="toggleTrainerFilter()"
+            class="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-slate-200 border border-slate-200/50 transition-all whitespace-nowrap">
+            {{ filterTrainerOnly ? '📌 My Batches Only' : '📋 All Batches' }}
+          </button>
+        </div>
+
+        <div *ngIf="trainerEnrollments.length === 0" class="text-center py-12 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50 space-y-2">
+
+          <span class="text-3xl block">👥</span>
+          <h3 class="font-bold text-slate-800">No Enrolled Students</h3>
+          <p class="text-xs text-slate-500">There are no students enrolled in your training courses at this time.</p>
+        </div>
+
+        <div *ngIf="filteredTrainerEnrollments.length === 0 && trainerEnrollments.length > 0" class="text-center py-10 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50 space-y-2">
+          <span class="text-3xl block">🔍</span>
+          <p class="font-bold text-slate-700">No students match your search/filter</p>
+          <button (click)="trainerSearchQuery = ''; trainerStatusFilter = 'all'" class="text-xs text-blue-600 hover:underline font-bold">Clear filters</button>
+        </div>
+
+        <div *ngIf="filteredTrainerEnrollments.length > 0" class="overflow-x-auto rounded-2xl border border-slate-100">
+          <table class="w-full text-left text-sm border-collapse bg-white">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <th class="px-6 py-4">Student Profile</th>
+                <th class="px-6 py-4">Training Program</th>
+                <th class="px-6 py-4">Progress Rating</th>
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4">Evaluation</th>
+                <th class="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let enrollment of filteredTrainerEnrollments" class="border-b border-slate-50 hover:bg-blue-50/30 transition-all">
+
+                <td class="px-6 py-4">
+                  <div class="font-black text-slate-900">{{ enrollment.studentName }}</div>
+                  <div class="text-[10px] font-medium text-slate-400 mt-0.5">{{ enrollment.studentEmail }}</div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="font-bold text-slate-800">{{ enrollment.courseTitle }}</div>
+                  <div class="text-[10px] text-slate-400 font-medium font-mono">Date: {{ enrollment.registeredAt | date: 'MMM dd, yyyy' }}</div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-24 bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200/50">
+                      <div [class]="'h-full rounded-full transition-all ' + getProgressColor(enrollment.progress)"
+                        [style.width.%]="enrollment.progress"></div>
+                    </div>
+                    <span class="font-bold text-xs text-slate-700">{{ enrollment.progress }}%</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span [class]="'text-xs font-bold px-2.5 py-1 rounded-full ' + getStatusBadgeClass(enrollment.status)">
+                    {{ enrollment.status | uppercase }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="px-2.5 py-1 text-xs font-black rounded-lg bg-slate-100 border border-slate-200/60 text-slate-800">
+                    {{ enrollment.grade || 'Pending' }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button (click)="selectEnrollment(enrollment)"
+                    class="px-3.5 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-xs rounded-lg transition">
+                    Grade & Feedback
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ADMIN DASHBOARD ==================== -->
+    <div *ngIf="currentUser.role === 'admin'" class="space-y-8 animate-fade-in">
+      <div class="flex flex-wrap border-b border-slate-200 gap-1">
+        <button (click)="adminTab = 'stats'" [class.border-blue-600]="adminTab === 'stats'" [class.text-blue-600]="adminTab === 'stats'" [class.font-bold]="adminTab === 'stats'" class="px-5 py-3 text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition">
+          📊 Stats Overview
+        </button>
+        <button (click)="adminTab = 'courses'" [class.border-blue-600]="adminTab === 'courses'" [class.text-blue-600]="adminTab === 'courses'" [class.font-bold]="adminTab === 'courses'" class="px-5 py-3 text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition">
+          🎓 Manage Courses
+        </button>
+        <button (click)="adminTab = 'users'" [class.border-blue-600]="adminTab === 'users'" [class.text-blue-600]="adminTab === 'users'" [class.font-bold]="adminTab === 'users'" class="px-5 py-3 text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition">
+          👥 Registered Users
+        </button>
+        <button (click)="adminTab = 'inquiries'" [class.border-blue-600]="adminTab === 'inquiries'" [class.text-blue-600]="adminTab === 'inquiries'" [class.font-bold]="adminTab === 'inquiries'" class="px-5 py-3 text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition relative">
+          🔔 Inquiries
+          <span *ngIf="stats.pendingInquiries > 0" class="absolute top-1 right-0 text-[9px] font-bold text-white bg-rose-500 w-4.5 h-4.5 rounded-full flex items-center justify-center border border-white">
+            {{ stats.pendingInquiries }}
+          </span>
+        </button>
+        <button (click)="adminTab = 'trainers'" [class.border-blue-600]="adminTab === 'trainers'" [class.text-blue-600]="adminTab === 'trainers'" [class.font-bold]="adminTab === 'trainers'" class="px-5 py-3 text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition">
+          🧑‍🏫 Trainers
+        </button>
+        <button (click)="adminTab = 'certificates'" [class.border-blue-600]="adminTab === 'certificates'" [class.text-blue-600]="adminTab === 'certificates'" [class.font-bold]="adminTab === 'certificates'" class="px-5 py-3 text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 transition">
+          📜 Certificates
+        </button>
+      </div>
+
+      <!-- Tab 1: Stats & Logs -->
+      <div *ngIf="adminTab === 'stats'" class="space-y-6 animate-fade-in">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col justify-center items-center">
+            <span class="text-3xl font-black text-blue-600">{{ stats.students }}</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Students</span>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col justify-center items-center">
+            <span class="text-3xl font-black text-indigo-600">{{ stats.trainers }}</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Trainers</span>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col justify-center items-center">
+            <span class="text-3xl font-black text-emerald-600">{{ stats.courses }}</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Courses</span>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm text-center flex flex-col justify-center items-center">
+            <span class="text-3xl font-black text-purple-600">{{ stats.totalEnrollments }}</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Enrollments</span>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-rose-100 shadow-sm text-center flex flex-col justify-center items-center bg-rose-50/30">
+            <span class="text-3xl font-black text-rose-600">{{ stats.pendingInquiries }}</span>
+            <span class="text-[10px] font-bold text-rose-400 uppercase tracking-widest mt-2">Inquiries</span>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- Tab 2: Manage Courses -->
+      <div *ngIf="adminTab === 'courses'" class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8 animate-fade-in">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div>
+            <h2 class="text-xl font-black text-slate-900">Training Modules Catalog</h2>
+            <p class="text-xs text-slate-400 mt-1">Create, update details, or delete current curriculum programs</p>
+          </div>
+          <button (click)="openNewCourseModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+            + Create New Course
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div *ngFor="let course of courses" class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+            <div class="space-y-4">
+              <div class="flex justify-between items-start gap-2">
+                <h3 class="font-black text-base text-slate-900 tracking-tight leading-snug">{{ course.title }}</h3>
+                <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded border border-indigo-100/50 whitespace-nowrap">
+                  {{ course.price }}
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 leading-relaxed">{{ course.description }}</p>
+              
+              <div class="flex flex-wrap gap-2 pt-2">
+                <span class="text-[9px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded">{{ course.duration }}</span>
+                <span class="text-[9px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded">👤 {{ course.trainerName }}</span>
+                <span class="text-[9px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded">👥 Cap: {{ course.capacity }}</span>
+              </div>
+            </div>
+
+            <div class="flex border-t border-slate-100 pt-4 gap-2 mt-5">
+              <button (click)="openEditCourseModal(course)" class="flex-1 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-lg transition">
+                Edit
+              </button>
+              <button (click)="deleteCourse(course.id)" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs rounded-lg transition">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Registered Users List -->
+      <div *ngIf="adminTab === 'users'" class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8 animate-fade-in">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-black text-slate-900">User Profiles Directory</h2>
+            <p class="text-xs text-slate-400 mt-1">Manage all roles, approval statuses, batches, and payment tracking.</p>
+          </div>
+        </div>
+
+        <!-- Advanced Filter Bar -->
+        <div class="mb-6 space-y-3">
+          <!-- Search Row -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+              <input
+                type="text"
+                [(ngModel)]="userSearchQuery"
+                placeholder="Search by name, email, phone, batch or trainer..."
+                id="user-search-input"
+                class="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition shadow-sm"
+              />
+              <button *ngIf="userSearchQuery" (click)="userSearchQuery = ''" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 font-bold text-lg leading-none">×</button>
+            </div>
+            <button (click)="clearUserFilters()" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl border border-slate-200 transition whitespace-nowrap">
+              ↺ Reset All Filters
+            </button>
+          </div>
+
+          <!-- Filter Chips Row -->
+          <div class="flex flex-wrap gap-2 items-center">
+            <!-- Role Filter -->
+            <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">Role:</span>
+              <select [(ngModel)]="userRoleFilter" id="user-role-filter" class="text-xs font-bold text-slate-700 bg-transparent outline-none cursor-pointer">
+                <option value="all">All</option>
+                <option value="student">Students</option>
+                <option value="trainer">Trainers</option>
+                <option value="admin">Admins</option>
+              </select>
+            </div>
+
+            <!-- Payment Status Filter -->
+            <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">💳 Payment:</span>
+              <select [(ngModel)]="userPaymentFilter" id="user-payment-filter" class="text-xs font-bold text-slate-700 bg-transparent outline-none cursor-pointer">
+                <option value="all">All</option>
+                <option value="paid">✅ Paid</option>
+                <option value="unpaid">❌ Unpaid</option>
+                <option value="yet to pay">⏳ Yet to Pay</option>
+                <option value="not interested">🚫 Not Interested</option>
+                <option value="none">— Not Set</option>
+              </select>
+            </div>
+
+            <!-- Approval Filter -->
+            <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">✔ Approval:</span>
+              <select [(ngModel)]="userApprovalFilter" id="user-approval-filter" class="text-xs font-bold text-slate-700 bg-transparent outline-none cursor-pointer">
+                <option value="all">All</option>
+                <option value="approved">Approved</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+
+            <!-- Batch Filter -->
+            <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">🗂 Batch:</span>
+              <select [(ngModel)]="userBatchFilter" id="user-batch-filter" class="text-xs font-bold text-slate-700 bg-transparent outline-none cursor-pointer">
+                <option value="">All Batches</option>
+                <option *ngFor="let batch of uniqueBatches" [value]="batch">{{ batch }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Results summary -->
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <span>Showing <strong class="text-slate-800">{{ filteredUsers.length }}</strong> of <strong class="text-slate-800">{{ users.length }}</strong> users</span>
+            <!-- Active filter pills -->
+            <span *ngIf="userPaymentFilter !== 'all'" class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-indigo-100">
+              💳 {{ userPaymentFilter }}
+              <button (click)="userPaymentFilter = 'all'" class="ml-0.5 hover:text-indigo-900 font-black">×</button>
+            </span>
+            <span *ngIf="userApprovalFilter !== 'all'" class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-100">
+              ✔ {{ userApprovalFilter }}
+              <button (click)="userApprovalFilter = 'all'" class="ml-0.5 hover:text-emerald-900 font-black">×</button>
+            </span>
+            <span *ngIf="userBatchFilter" class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-purple-100">
+              🗂 {{ userBatchFilter }}
+              <button (click)="userBatchFilter = ''" class="ml-0.5 hover:text-purple-900 font-black">×</button>
+            </span>
+            <span *ngIf="userRoleFilter !== 'all'" class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-blue-100">
+              👤 {{ userRoleFilter }}
+              <button (click)="userRoleFilter = 'all'" class="ml-0.5 hover:text-blue-900 font-black">×</button>
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-100 rounded-2xl">
+          <table class="w-full text-left text-xs border-collapse bg-white">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                <th class="px-4 py-3">ID</th>
+                <th class="px-4 py-3">Name & Role</th>
+                <th class="px-4 py-3">Contact</th>
+                <th class="px-4 py-3">Payment</th>
+                <th class="px-4 py-3">Batch & Trainer</th>
+                <th class="px-4 py-3">Approval</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of filteredUsers" class="border-b border-slate-50 hover:bg-slate-50/50 transition-all">
+                <td class="px-4 py-3 font-mono text-slate-500">{{ u.id.split('-')[1] || u.id }}</td>
+                <td class="px-4 py-3">
+                  <div *ngIf="editingUserId !== u.id">
+                    <div class="font-bold text-slate-900">{{ u.name }}</div>
+                    <span [class]="'px-2 py-0.5 mt-1 inline-block text-[9px] font-bold rounded uppercase tracking-wider ' + (u.role === 'admin' ? 'bg-rose-100 text-rose-800' : u.role === 'trainer' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800')">
+                      {{ u.role }}
+                    </span>
+                  </div>
+                  <div *ngIf="editingUserId === u.id">
+                    <input type="text" [(ngModel)]="editUserForm.name" class="w-full px-2 py-1 border border-blue-300 rounded focus:outline-none mb-1 text-xs" />
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <div *ngIf="editingUserId !== u.id">
+                    <div class="text-slate-700">{{ u.email }}</div>
+                    <div class="text-slate-500">{{ u.contactNum || 'N/A' }}</div>
+                  </div>
+                  <div *ngIf="editingUserId === u.id" class="space-y-1">
+                    <input type="email" [(ngModel)]="editUserForm.email" class="w-full px-2 py-1 border border-blue-300 rounded focus:outline-none text-xs" />
+                    <input type="text" [(ngModel)]="editUserForm.contactNum" class="w-full px-2 py-1 border border-blue-300 rounded focus:outline-none text-xs" placeholder="Phone" />
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <div *ngIf="editingUserId !== u.id">
+                    <span *ngIf="u.paymentStatus" [class]="'px-2 py-0.5 text-[9px] font-bold rounded uppercase ' + (u.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800' : u.paymentStatus === 'unpaid' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800')">
+                      {{ u.paymentStatus }}
+                    </span>
+                    <span *ngIf="!u.paymentStatus" class="text-slate-400 italic">N/A</span>
+                  </div>
+                  <div *ngIf="editingUserId === u.id">
+                    <select [(ngModel)]="editUserForm.paymentStatus" class="w-full px-2 py-1 border border-blue-300 rounded focus:outline-none text-xs">
+                      <option value="paid">Paid</option>
+                      <option value="unpaid">Unpaid</option>
+                      <option value="yet to pay">Yet to Pay</option>
+                      <option value="not interested">Not Interested</option>
+                    </select>
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <div *ngIf="editingUserId !== u.id">
+                    <div class="font-medium text-slate-800">{{ u.batchNumber || 'No Batch' }}</div>
+                    <div class="text-[10px] text-slate-500 mt-0.5">Trainer: {{ u.assignedTrainer || 'Pending' }}</div>
+                  </div>
+                  <div *ngIf="editingUserId === u.id" class="space-y-1">
+                    <input type="text" [(ngModel)]="editUserForm.batchNumber" class="w-full px-2 py-1 border border-blue-300 rounded focus:outline-none text-xs" placeholder="Batch" />
+                    <input type="text" [(ngModel)]="editUserForm.assignedTrainer" class="w-full px-2 py-1 border border-blue-300 rounded focus:outline-none text-xs" placeholder="Trainer" />
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <div *ngIf="editingUserId !== u.id">
+                    <span [class]="'px-2 py-0.5 text-[9px] font-bold rounded uppercase ' + (u.approvalStatus === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800')">
+                      {{ u.approvalStatus || 'Pending' }}
+                    </span>
+                    <button *ngIf="u.approvalStatus !== 'approved'" (click)="approveUser(u)" class="block mt-1 text-[10px] text-blue-600 hover:underline font-bold">Accept</button>
+                  </div>
+                  <div *ngIf="editingUserId === u.id">
+                    <select [(ngModel)]="editUserForm.approvalStatus" class="w-full px-2 py-1 border border-blue-300 rounded focus:outline-none text-xs">
+                      <option value="approved">Approved</option>
+                      <option value="pending">Pending</option>
+                    </select>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-right space-x-1 whitespace-nowrap">
+                  <div *ngIf="editingUserId !== u.id">
+                    <button (click)="editUser(u)" class="px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold rounded transition">Edit</button>
+                    <button (click)="deleteUser(u.id)" class="px-2 py-1 bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold rounded transition">Del</button>
+                  </div>
+                  <div *ngIf="editingUserId === u.id" class="flex flex-col gap-1 items-end">
+                    <button (click)="saveUser()" [disabled]="isSavingUser" class="px-3 py-1 bg-emerald-500 text-white hover:bg-emerald-600 font-bold rounded transition w-full">Save</button>
+                    <button (click)="cancelEditUser()" class="px-3 py-1 bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold rounded transition w-full">Cancel</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 4: Inquiries -->
+      <div *ngIf="adminTab === 'inquiries'" class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8 animate-fade-in">
+        <div class="mb-6">
+          <h2 class="text-xl font-black text-slate-900">Student & Client Inquiries</h2>
+          <p class="text-xs text-slate-400 mt-1">Manage web inquiries, contact logs, and follow-up activities</p>
+        </div>
+
+        <!-- Inquiry Search & Filter -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-5 p-4 bg-slate-50/70 rounded-2xl border border-slate-100">
+          <div class="relative flex-1">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+            <input
+              type="text"
+              [(ngModel)]="inquirySearchQuery"
+              placeholder="Search by name, email, phone, or subject..."
+              id="inquiry-search-input"
+              class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none transition"
+            />
+            <button *ngIf="inquirySearchQuery" (click)="inquirySearchQuery = ''" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 font-bold text-lg leading-none">×</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-500 whitespace-nowrap">Status:</span>
+            <div class="flex gap-1.5">
+              <button (click)="inquiryStatusFilter = 'all'" [class]="'px-3 py-2 text-xs font-bold rounded-lg border transition ' + (inquiryStatusFilter === 'all' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50')">
+                All ({{ inquiries.length }})
+              </button>
+              <button (click)="inquiryStatusFilter = 'unread'" [class]="'px-3 py-2 text-xs font-bold rounded-lg border transition ' + (inquiryStatusFilter === 'unread' ? 'bg-rose-600 text-white border-rose-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200')">
+                🔴 Unread
+              </button>
+              <button (click)="inquiryStatusFilter = 'read'" [class]="'px-3 py-2 text-xs font-bold rounded-lg border transition ' + (inquiryStatusFilter === 'read' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-slate-600 border-slate-200 hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200')">
+                🟡 Read
+              </button>
+              <button (click)="inquiryStatusFilter = 'replied'" [class]="'px-3 py-2 text-xs font-bold rounded-lg border transition ' + (inquiryStatusFilter === 'replied' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200')">
+                ✅ Replied
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="inquiries.length === 0" class="text-center py-12 border border-dashed border-slate-200 rounded-2xl bg-white space-y-2">
+          <span class="text-3xl block">📧</span>
+          <h3 class="font-bold text-slate-800">No Web Inquiries</h3>
+          <p class="text-xs text-slate-500">There are no client contact requests registered in the portal database.</p>
+        </div>
+
+        <div *ngIf="filteredInquiries.length === 0 && inquiries.length > 0" class="text-center py-10 border border-dashed border-slate-200 rounded-2xl bg-white space-y-2">
+          <span class="text-3xl block">🔍</span>
+          <p class="font-bold text-slate-700">No inquiries match your search/filter</p>
+          <button (click)="inquirySearchQuery = ''; inquiryStatusFilter = 'all'" class="text-xs text-blue-600 hover:underline font-bold">Clear filters</button>
+        </div>
+
+        <div *ngIf="filteredInquiries.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div *ngFor="let inquiry of filteredInquiries" [class.border-l-4]="inquiry.status === 'unread'" [class.border-l-rose-500]="inquiry.status === 'unread'" class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between gap-4 hover:shadow-md transition-all">
+
+            <div class="space-y-3">
+              <div class="flex justify-between items-start gap-2">
+                <div>
+                  <h3 class="font-black text-slate-900 leading-tight">{{ inquiry.name }}</h3>
+                  <span class="text-[10px] text-slate-400 font-medium">{{ inquiry.email }} | {{ inquiry.phone }}</span>
+                </div>
+                <span [class]="'text-[9px] font-bold px-2 py-0.5 rounded uppercase ' + (inquiry.status === 'unread' ? 'bg-rose-50 text-rose-600 border border-rose-100' : inquiry.status === 'replied' ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100')">
+                  {{ inquiry.status }}
+                </span>
+              </div>
+              
+              <div>
+                <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Subject: {{ inquiry.subject }}</div>
+                <p class="text-xs text-slate-600 leading-relaxed italic bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">
+                  "{{ inquiry.message }}"
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-2 border-t border-slate-50 pt-3 text-[10px] font-bold text-slate-400">
+              <span>Submitted: {{ inquiry.createdAt | date: 'MMM dd, yyyy hh:mm a' }}</span>
+              <div class="flex-grow"></div>
+              <button *ngIf="inquiry.status === 'unread'" (click)="markInquiryStatus(inquiry.id, 'read')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded transition">
+                Mark Read
+              </button>
+              <button *ngIf="inquiry.status !== 'replied'" (click)="markInquiryStatus(inquiry.id, 'replied')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded transition">
+                Mark Replied
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Trainers -->
+      <div *ngIf="adminTab === 'trainers'" class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8 animate-fade-in">
+        <div class="mb-6">
+          <h2 class="text-xl font-black text-slate-900">Trainer Management</h2>
+          <p class="text-xs text-slate-400 mt-1">View and organize registered expert trainers and their specializations.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ng-container *ngFor="let trainer of users">
+            <div *ngIf="trainer.role === 'trainer'" class="border border-slate-200 rounded-2xl p-6 bg-slate-50/50 hover:shadow transition">
+              <!-- View Mode -->
+              <div *ngIf="editingUserId !== trainer.id" class="space-y-2">
+                <h3 class="font-black text-lg text-slate-900">{{ trainer.name }}</h3>
+                <p class="text-xs font-bold text-blue-600">{{ trainer.specialization || 'General Trainer' }}</p>
+                <div class="text-xs text-slate-600"><strong>Email:</strong> {{ trainer.email }}</div>
+                <div class="text-xs text-slate-600"><strong>Skills:</strong> {{ trainer.strongTechnologies || 'N/A' }}</div>
+                <div class="flex gap-2 justify-end mt-4 pt-2 border-t border-slate-200/60">
+                  <button (click)="editUser(trainer)" class="px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold rounded-lg transition text-xs">Edit</button>
+                  <button (click)="deleteUser(trainer.id)" class="px-3 py-1 bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold rounded-lg transition text-xs">Delete</button>
+                </div>
+              </div>
+              
+              <!-- Edit Mode -->
+              <div *ngIf="editingUserId === trainer.id" class="space-y-3">
+                <div>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase">Trainer Name</label>
+                  <input type="text" [(ngModel)]="editUserForm.name" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 text-xs mt-0.5" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase">Specialization</label>
+                  <input type="text" [(ngModel)]="editUserForm.specialization" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 text-xs mt-0.5" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase">Email</label>
+                  <input type="email" [(ngModel)]="editUserForm.email" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 text-xs mt-0.5" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold text-slate-400 uppercase">Skills</label>
+                  <input type="text" [(ngModel)]="editUserForm.strongTechnologies" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 text-xs mt-0.5" placeholder="Skills (comma separated)" />
+                </div>
+                <div class="flex gap-2 justify-end mt-4 pt-2 border-t border-slate-200/60">
+                  <button (click)="saveUser()" [disabled]="isSavingUser" class="px-4 py-1.5 bg-emerald-500 text-white hover:bg-emerald-600 font-bold rounded-lg transition text-xs">{{ isSavingUser ? 'Saving...' : 'Save' }}</button>
+                  <button (click)="cancelEditUser()" class="px-4 py-1.5 bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold rounded-lg transition text-xs">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Tab 6: Certificates -->
+      <div *ngIf="adminTab === 'certificates'" class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8 animate-fade-in">
+        <div class="text-center py-12">
+          <span class="text-5xl block mb-4">📜</span>
+          <h2 class="text-2xl font-black text-slate-900">Certificates Portal</h2>
+          <p class="text-sm text-slate-500 mt-2 max-w-md mx-auto">Generate and manage digital course completion certificates for students who have successfully achieved a passing grade in their batches.</p>
+          <button class="mt-6 px-6 py-2 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700 transition">
+            Generate Certificates (Coming Soon)
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== TRAINER GRADE MODAL ==================== -->
+  <div *ngIf="editingEnrollment" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-2xl max-w-md w-full overflow-hidden animate-fade-in">
+      <div class="p-6 sm:p-8 space-y-6">
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-xl font-black text-slate-900">Academic Evaluation</h2>
+            <p class="text-xs text-slate-400 mt-1">Review student progress details for {{ editingEnrollment.studentName }}</p>
+          </div>
+          <button (click)="closeEditModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+        </div>
+
+        <form (ngSubmit)="submitEnrollmentUpdate()" class="space-y-4">
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-bold text-slate-500">
+              <span class="uppercase tracking-wider">Syllabus Progress</span>
+              <span class="text-slate-800">{{ editProgress }}%</span>
+            </div>
+            <input type="range" min="0" max="100" [(ngModel)]="editProgress" name="editProgress" class="w-full accent-blue-600" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Academic Evaluation Grade</label>
+            <select [(ngModel)]="editGrade" name="editGrade" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none bg-white font-medium">
+              <option value="A+">A+ (Distinction)</option>
+              <option value="A">A (Excellent)</option>
+              <option value="B">B (Good)</option>
+              <option value="C">C (Average)</option>
+              <option value="Fail">Fail</option>
+              <option value="Pending">Pending Evaluation</option>
+            </select>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Trainer Feedback note</label>
+            <textarea [(ngModel)]="editFeedback" name="editFeedback" rows="3" placeholder="Provide constructive review guidelines..." class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs focus:border-blue-500 outline-none font-medium leading-relaxed"></textarea>
+          </div>
+
+          <button type="submit" [disabled]="isSavingEnrollment" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg disabled:opacity-75 transition-all text-sm">
+            {{ isSavingEnrollment ? 'Saving progress...' : 'Commit Evaluation Details' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ADMIN COURSE CRUD MODAL ==================== -->
+  <div *ngIf="showCourseModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-2xl max-w-lg w-full overflow-hidden animate-fade-in my-8">
+      <div class="p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-2xl font-black text-slate-900">{{ courseModalTitle }}</h2>
+            <p class="text-xs text-slate-400 mt-1">Configure syllabus and batch attributes</p>
+          </div>
+          <button (click)="closeCourseModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+        </div>
+
+        <form (ngSubmit)="submitCourseForm()" class="space-y-4">
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Course Title</label>
+            <input type="text" [(ngModel)]="courseForm.title" name="courseTitle" required placeholder="e.g. Enterprise Spring Boot Development" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:border-blue-500 outline-none font-medium" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Course Description</label>
+            <textarea [(ngModel)]="courseForm.description" name="courseDesc" required rows="3" placeholder="Provide a high-impact overview..." class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:border-blue-500 outline-none font-medium leading-relaxed"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Duration</label>
+              <input type="text" [(ngModel)]="courseForm.duration" name="courseDuration" placeholder="e.g. 12 Weeks" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:border-blue-500 outline-none font-medium" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Assigned Instructor</label>
+              <input type="text" [(ngModel)]="courseForm.trainerName" name="courseTrainer" placeholder="e.g. Mr. Satish Raghavan" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:border-blue-500 outline-none font-medium" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Student Capacity</label>
+              <input type="number" [(ngModel)]="courseForm.capacity" name="courseCapacity" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:border-blue-500 outline-none font-medium" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">EMI / Price Tag</label>
+              <input type="text" [(ngModel)]="courseForm.price" name="coursePrice" placeholder="$299" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:border-blue-500 outline-none font-medium" />
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Key Features (Comma separated)</label>
+            <input type="text" [(ngModel)]="courseForm.featuresText" name="courseFeatures" placeholder="e.g. Live Projects, Mock Reviews" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:border-blue-500 outline-none font-medium" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Syllabus Modules (Comma separated)</label>
+            <textarea [(ngModel)]="courseForm.syllabusText" name="courseSyllabus" rows="3" placeholder="e.g. Core Java Basics, REST APIs, Microservices, Kubernetes" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:border-blue-500 outline-none font-medium leading-relaxed"></textarea>
+          </div>
+
+          <button type="submit" [disabled]="isSavingCourse" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg disabled:opacity-75 transition-all text-sm">
+            {{ isSavingCourse ? 'Updating database...' : 'Publish Course Modality' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
