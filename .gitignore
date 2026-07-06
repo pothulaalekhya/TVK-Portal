@@ -1,8 +1,41 @@
+# ===========================
+# Node / Angular (Frontend)
+# ===========================
 node_modules/
-build/
 dist/
+.angular/
 coverage/
-.DS_Store
 *.log
-.env*
+npm-debug.log*
+
+# ===========================
+# Java / Maven (Backend)
+# ===========================
+backend/target/
+backend/*.jar
+backend/maven.zip
+backend/apache-maven-3.9.6/
+
+# ===========================
+# IDE / OS
+# ===========================
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ===========================
+# Environment / Secrets
+# ===========================
+.env
+.env.*
 !.env.example
+
+# ===========================
+# Build outputs
+# ===========================
+build/
+out/
+*.class
+*.jar
+*.war
