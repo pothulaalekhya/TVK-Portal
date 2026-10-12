@@ -1,0 +1,609 @@
+/* ==========================================================================
+   TVK TECHNOLOGIES - SCROLL-DRIVEN MOTION & TRANSITIONS DESIGN SYSTEM
+   Standardized 3-tier duration system & ease-out-expo curve:
+   - Micro tier: 150ms (buttons, clicks, hover, fade outs)
+   - Standard tier: 300ms (crossfade, accordion, modals, indicators)
+   - Section tier: 550ms (scroll reveal, hero entrance)
+   - Standard Easing: cubic-bezier(0.22, 1, 0.36, 1)
+   ========================================================================== */
+
+:root {
+  --dur-micro: 150ms;
+  --dur-standard: 300ms;
+  --dur-section: 550ms;
+  --dur-carousel: 400ms;
+  --dur-hero: 750ms;
+
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --motion-duration-reveal: var(--dur-section);
+  --motion-duration-hero: var(--dur-hero);
+  --motion-duration-modal: var(--dur-micro);
+  --motion-duration-route: var(--dur-standard);
+  --motion-duration-flip: var(--dur-standard);
+
+  --motion-y-dist: 24px;
+  --motion-x-dist: 32px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --motion-y-dist: 16px;
+    --motion-x-dist: 20px;
+  }
+}
+
+/* ==========================================================================
+   HARD RULE: PREFERS-REDUCED-MOTION
+   Disables all animation effects, displays all elements statically.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .motion-reveal,
+  .motion-slide-right,
+  .motion-slide-left,
+  .motion-stagger-item,
+  .motion-hero-element,
+  .motion-card-enter,
+  .motion-modal-dialog,
+  .motion-modal-backdrop,
+  .motion-floating-btn,
+  .phase-stepper-panel,
+  .phase-stepper-text,
+  .testimonial-slide-track,
+  .testimonial-quote-text {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .motion-tech-float,
+  .motion-tech-float-offset {
+    animation: none !important;
+  }
+}
+
+/* ==========================================================================
+   A. HERO ENTRANCE & PARALLAX HANDOFF
+   ========================================================================== */
+.motion-hero-title {
+  opacity: 0;
+  transform: translateY(var(--motion-y-dist));
+  animation: heroFadeUp 900ms var(--motion-ease-expo) forwards;
+  animation-delay: 100ms;
+  will-change: transform, opacity;
+}
+
+.motion-hero-subtext {
+  opacity: 0;
+  transform: translateY(var(--motion-y-dist));
+  animation: heroFadeUp 900ms var(--motion-ease-expo) forwards;
+  animation-delay: 220ms;
+  will-change: transform, opacity;
+}
+
+.motion-hero-cta {
+  opacity: 0;
+  transform: translateY(var(--motion-y-dist));
+  animation: heroFadeUp 900ms var(--motion-ease-expo) forwards;
+  animation-delay: 340ms;
+  will-change: transform, opacity;
+}
+
+.motion-hero-proof {
+  opacity: 0;
+  transform: translateY(var(--motion-y-dist));
+  animation: heroFadeUp 900ms var(--motion-ease-expo) forwards;
+  animation-delay: 460ms;
+  will-change: transform, opacity;
+}
+
+.motion-hero-card {
+  opacity: 0;
+  transform: translateX(var(--motion-x-dist)) scale(0.98);
+  animation: heroCardSlide 950ms var(--motion-ease-expo) forwards;
+  animation-delay: 200ms;
+  will-change: transform, opacity;
+}
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-y-dist));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroCardSlide {
+  from {
+    opacity: 0;
+    transform: translateX(var(--motion-x-dist)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Hero scroll-driven drift handoff */
+.motion-hero-handoff {
+  will-change: transform, opacity;
+  transition: transform 100ms linear, opacity 100ms linear;
+}
+
+/* ==========================================================================
+   B & C. SECTION REVEAL & STAGGER DIRECTIVE STYLES
+   ========================================================================== */
+.motion-reveal {
+  opacity: 0;
+  transform: translateY(var(--motion-y-dist));
+  transition: opacity var(--motion-duration-reveal) var(--motion-ease-expo),
+              transform var(--motion-duration-reveal) var(--motion-ease-expo);
+  will-change: transform, opacity;
+}
+
+.motion-reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.motion-reveal-slide-right {
+  opacity: 0;
+  transform: translateX(var(--motion-x-dist));
+  transition: opacity var(--motion-duration-reveal) var(--motion-ease-expo),
+              transform var(--motion-duration-reveal) var(--motion-ease-expo);
+  will-change: transform, opacity;
+}
+
+.motion-reveal-slide-right.is-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.motion-reveal-slide-left {
+  opacity: 0;
+  transform: translateX(calc(-1 * var(--motion-x-dist)));
+  transition: opacity var(--motion-duration-reveal) var(--motion-ease-expo),
+              transform var(--motion-duration-reveal) var(--motion-ease-expo);
+  will-change: transform, opacity;
+}
+
+.motion-reveal-slide-left.is-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger delay classes */
+.motion-stagger-item {
+  opacity: 0;
+  transform: translateY(var(--motion-y-dist));
+  transition: opacity 550ms var(--motion-ease-expo),
+              transform 550ms var(--motion-ease-expo);
+  will-change: transform, opacity;
+}
+
+.is-revealed .motion-stagger-item,
+.motion-stagger-item.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Card hover lift (transform & box-shadow ONLY) */
+.motion-hover-lift {
+  transition: transform 250ms var(--motion-ease-out),
+              box-shadow 250ms var(--motion-ease-out);
+  will-change: transform, box-shadow;
+}
+
+.motion-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+.dark .motion-hover-lift:hover {
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   D. TECH-STACK TILES (Scale Entrance & Subtle Continuous Float)
+   ========================================================================== */
+.motion-tech-tile {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 500ms var(--motion-ease-expo),
+              transform 500ms var(--motion-ease-expo);
+  will-change: transform, opacity;
+}
+
+.is-revealed .motion-tech-tile,
+.motion-tech-tile.is-revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes motionFloatSine {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.motion-tech-float {
+  animation: motionFloatSine 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.motion-tech-float-offset {
+  animation: motionFloatSine 6.2s ease-in-out infinite;
+  animation-delay: -2.5s;
+  will-change: transform;
+}
+
+/* ==========================================================================
+   E. PHASE STEPPER SCROLLYTELLING BLOCK (Phase 01 -> 04)
+   - Crossfade text content (150ms fade out, 300ms fade+slide in)
+   - Smooth animated active-step indicator line & dot
+   - Browser-mockup / interactive lab panel with crossfade & subtle scale (0.98 -> 1)
+   ========================================================================== */
+.phase-stepper-container {
+  position: relative;
+}
+
+.phase-step-btn {
+  transition: transform var(--dur-micro) var(--ease-standard),
+              background-color var(--dur-micro) ease,
+              border-color var(--dur-micro) ease,
+              box-shadow var(--dur-micro) ease;
+  will-change: transform;
+}
+
+.phase-step-btn:hover {
+  transform: translateX(4px);
+}
+
+.phase-step-btn:active {
+  transform: scale(0.98) translateX(2px);
+}
+
+/* Active indicator vertical bar & sliding pill */
+.phase-indicator-rail {
+  position: relative;
+  transition: background-color var(--dur-standard) ease;
+}
+
+.phase-indicator-slider {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  border-radius: 9999px;
+  background: #4f46e5;
+  transition: transform var(--dur-standard) var(--ease-standard),
+              height var(--dur-standard) var(--ease-standard),
+              opacity var(--dur-standard) ease;
+  will-change: transform, height;
+}
+
+.dark .phase-indicator-slider {
+  background: #6366f1;
+}
+
+/* Text content crossfade (150ms out -> 300ms in with ease-out-expo) */
+.phase-content-text {
+  transition: opacity var(--dur-standard) var(--ease-standard),
+              transform var(--dur-standard) var(--ease-standard);
+  will-change: transform, opacity;
+}
+
+.phase-content-text.is-fading-out {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition-duration: 150ms;
+}
+
+.phase-content-text.is-fading-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition-duration: 300ms;
+}
+
+/* Browser mockup / screenshot right panel */
+.phase-mockup-panel {
+  transition: opacity var(--dur-standard) var(--ease-standard),
+              transform var(--dur-standard) var(--ease-standard),
+              border-color var(--dur-standard) ease,
+              box-shadow var(--dur-standard) ease;
+  will-change: transform, opacity;
+}
+
+.phase-mockup-panel.is-transitioning {
+  opacity: 0.7;
+  transform: scale(0.98);
+}
+
+.phase-mockup-panel.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ==========================================================================
+   F. TESTIMONIAL CAROUSEL (translateX + Text Crossfade + Tactile Buttons)
+   ========================================================================== */
+.testimonial-carousel-viewport {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.testimonial-carousel-track {
+  display: flex;
+  width: 100%;
+  transition: transform var(--dur-carousel) cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+.testimonial-carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+}
+
+.testimonial-quote-text {
+  transition: opacity 250ms var(--ease-standard),
+              transform 250ms var(--ease-standard);
+  will-change: transform, opacity;
+}
+
+.testimonial-quote-text.is-fading {
+  opacity: 0.3;
+  transform: translateY(4px);
+}
+
+/* Prev/Next Tactile Button Action */
+.carousel-btn {
+  transition: transform var(--dur-micro) var(--ease-standard),
+              background-color var(--dur-micro) ease,
+              box-shadow var(--dur-micro) ease,
+              border-color var(--dur-micro) ease;
+  will-change: transform;
+}
+
+.carousel-btn:hover {
+  transform: scale(1.05);
+}
+
+.carousel-btn:active {
+  transform: scale(0.90) translateY(1px);
+}
+
+.carousel-dot {
+  transition: width var(--dur-standard) var(--ease-standard),
+              background-color var(--dur-standard) ease,
+              opacity var(--dur-standard) ease;
+  will-change: width;
+}
+
+/* ==========================================================================
+   G. GENERAL INTERACTIVE POLISH (Buttons, Links, Cards)
+   ========================================================================== */
+button:not([disabled]),
+a:not([disabled]),
+.clickable-card {
+  transition: transform var(--dur-micro) var(--ease-standard),
+              background-color var(--dur-micro) ease,
+              border-color var(--dur-micro) ease,
+              box-shadow var(--dur-micro) ease,
+              color var(--dur-micro) ease,
+              opacity var(--dur-micro) ease;
+}
+
+button:active:not([disabled]),
+a.btn-active:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   H. SECTION BACKGROUND INTERPOLATION
+   ========================================================================== */
+.motion-bg-smooth {
+  transition: background-color 400ms ease, border-color 400ms ease;
+}
+
+/* ==========================================================================
+   G. FAQ ACCORDION EXPANSION (grid-template-rows: 0fr -> 1fr)
+   Does not change existing markup. Expands smoothly without layout shift.
+   ========================================================================== */
+.motion-faq-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms var(--motion-ease-out);
+}
+
+.motion-faq-body.is-open {
+  grid-template-rows: 1fr;
+}
+
+.motion-faq-body > div {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   K. PROGRESS & SEATS BARS
+   ========================================================================== */
+.motion-progress-bar {
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 800ms var(--motion-ease-expo);
+  will-change: transform;
+}
+
+.is-revealed .motion-progress-bar,
+.motion-progress-bar.is-revealed {
+  transform: scaleX(1);
+}
+
+/* ==========================================================================
+   L. ROUTE TRANSITIONS (250-350ms Cross-Fade with 12px y-shift)
+   ========================================================================== */
+.motion-route-container {
+  display: block;
+  animation: routeCrossFade 300ms var(--motion-ease-expo) forwards;
+}
+
+.motion-route-container:has(.scrolly-root) {
+  animation: none !important;
+  transform: none !important;
+  will-change: auto !important;
+  overflow: visible !important;
+}
+
+@keyframes routeCrossFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   M. MODAL MOTION (Sign In & Student Application)
+   ========================================================================== */
+.motion-modal-backdrop {
+  opacity: 0;
+  animation: modalBackdropFade 200ms ease-out forwards;
+}
+
+@keyframes modalBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.motion-modal-dialog {
+  opacity: 0;
+  transform: scale(0.96) translateY(12px);
+  animation: modalDialogEnter 250ms var(--motion-ease-expo) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes modalDialogEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ==========================================================================
+   N. HEADER BLUR / SHADOW & DARK MODE TOGGLE ROTATION
+   ========================================================================== */
+.motion-header-scrolled {
+  transition: background-color 250ms ease,
+              box-shadow 250ms ease,
+              border-color 250ms ease,
+              padding 250ms ease;
+}
+
+.motion-dark-toggle-icon {
+  transition: transform 250ms var(--motion-ease-expo),
+              opacity 200ms ease;
+  will-change: transform, opacity;
+}
+
+.motion-dark-toggle-icon:active {
+  transform: rotate(45deg) scale(0.9);
+}
+
+.motion-nav-link {
+  position: relative;
+  transition: color 200ms ease;
+}
+
+.motion-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #4f46e5;
+  transition: width 220ms var(--motion-ease-out), left 220ms var(--motion-ease-out);
+  border-radius: 9999px;
+}
+
+.dark .motion-nav-link::after {
+  background-color: #6366f1;
+}
+
+.motion-nav-link:hover::after,
+.motion-nav-link.active::after {
+  width: 70%;
+  left: 15%;
+}
+
+/* ==========================================================================
+   O. FLOATING REQUEST CALLBACK BUTTON
+   Entrance after 1.5s delay + Soft Pulse on Status Dot
+   ========================================================================== */
+.motion-floating-btn {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: floatingBtnEntrance 500ms var(--motion-ease-expo) forwards;
+  animation-delay: 1.5s;
+  will-change: transform, opacity;
+}
+
+@keyframes floatingBtnEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softPulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.75;
+  }
+}
+
+.motion-dot-pulse {
+  animation: softPulseDot 2.4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   P. FORM INPUT SMOOTH RING TRANSITION
+   ========================================================================== */
+.motion-input-ring {
+  transition: box-shadow 200ms ease, border-color 200ms ease, background-color 200ms ease !important;
+}

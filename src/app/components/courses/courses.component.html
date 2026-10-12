@@ -1,98 +1,391 @@
-<div class="space-y-8 animate-fade-in font-sans">
-  <!-- Filter Header -->
-  <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-black text-gray-900 tracking-tight">
-          Technical Training Modules
-        </h1>
-        <p class="text-xs text-gray-500 mt-1">
-          Select high-performance training certificates with assured placement
-          callbacks.
-        </p>
-      </div>
-      <input [(ngModel)]="termFilter" type="text" placeholder="Search courses..."
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+<div class="site-container py-10 space-y-12 font-sans">
+  
+  <!-- Centered Header & Breadcrumbs -->
+  <div class="space-y-3 text-center max-w-2xl mx-auto" motionReveal="fade-up">
+    <div class="flex items-center justify-center gap-2 text-xs font-medium text-slate-400">
+      <a routerLink="/home" class="hover:text-indigo-600 transition">Home</a>
+      <span>/</span>
+      <span class="text-indigo-600 dark:text-indigo-400 font-semibold">Courses & Batches</span>
     </div>
+
+    <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white">
+      Explore Certified Training Programs
+    </h1>
+    <p class="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+      Classroom and online tracks in Bangalore and Chennai with live microservices projects and 100% placement assurance.
+    </p>
   </div>
 
-  <!-- Courses Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let course of filteredCourses"
-      class="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all overflow-hidden cursor-pointer flex flex-col h-full"
-      (click)="selectCourse(course)">
-      <!-- Course Header -->
-      <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
-        <h3 class="text-lg font-bold">{{ course.title }}</h3>
-        <p class="text-sm text-blue-100 mt-1">by {{ course.trainerName }}</p>
+  <!-- Main Content Layout (Sidebar Filters + Results) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- ===================================================================== -->
+    <!-- SIDEBAR FILTERS (Left Column)                                         -->
+    <!-- ===================================================================== -->
+    <div class="lg:col-span-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-6 shadow-sm sticky top-24" motionReveal="slide-left">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <h3 class="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">
+          Filter Courses
+        </h3>
+        <button (click)="resetFilters()" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+          Reset All
+        </button>
       </div>
 
-      <!-- Course Body -->
-      <div class="p-6 flex-grow flex flex-col">
-        <p class="text-sm text-gray-600 mb-4 min-h-[60px]">{{ course.description }}</p>
+      <!-- Keyword Search -->
+      <div class="space-y-1.5">
+        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Keyword Search</label>
+        <div class="relative">
+          <input type="text" [(ngModel)]="termFilter" placeholder="e.g. Java, Angular, React..."
+            class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none font-normal" />
+          <button *ngIf="termFilter" (click)="termFilter = ''" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">&times;</button>
+        </div>
+      </div>
 
-        <div class="mt-auto space-y-3">
-          <!-- Duration & Capacity -->
-          <div class="flex justify-between text-xs text-gray-500">
-            <span>📅 {{ course.duration }}</span>
-            <span>👥 {{ course.enrolledCount }} / {{ course.capacity }}</span>
+      <!-- Track / Category -->
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Technology Track</label>
+        <div class="space-y-1 text-sm">
+          <label (click)="selectedCategory = 'all'"
+            [class]="'flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition ' + (selectedCategory === 'all' ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800')">
+            <span>All Programs</span>
+            <span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">{{ getCountByCategory('all') }}</span>
+          </label>
+          <label (click)="selectedCategory = 'Full Stack'"
+            [class]="'flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition ' + (selectedCategory === 'Full Stack' ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800')">
+            <span>Full Stack Engineering</span>
+            <span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">{{ getCountByCategory('Full Stack') }}</span>
+          </label>
+          <label (click)="selectedCategory = 'Backend'"
+            [class]="'flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition ' + (selectedCategory === 'Backend' ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800')">
+            <span>Java Backend</span>
+            <span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">{{ getCountByCategory('Backend') }}</span>
+          </label>
+          <label (click)="selectedCategory = 'Frontend'"
+            [class]="'flex items-center justify-between p-2.5 rounded-lg cursor-pointer transition ' + (selectedCategory === 'Frontend' ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800')">
+            <span>Modern Frontend</span>
+            <span class="text-xs bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">{{ getCountByCategory('Frontend') }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Training Mode -->
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Training Mode</label>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button type="button" (click)="selectedMode = 'all'"
+            [class]="'h-10 px-2 rounded-[10px] border text-center font-medium transition ' + (selectedMode === 'all' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400')">
+            All Modes
+          </button>
+          <button type="button" (click)="selectedMode = 'Classroom'"
+            [class]="'h-10 px-2 rounded-[10px] border text-center font-medium transition ' + (selectedMode === 'Classroom' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400')">
+            Classroom
+          </button>
+          <button type="button" (click)="selectedMode = 'Online'"
+            [class]="'h-10 px-2 rounded-[10px] border text-center font-medium transition ' + (selectedMode === 'Online' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400')">
+            Live Online
+          </button>
+          <button type="button" (click)="selectedMode = 'Weekend'"
+            [class]="'h-10 px-2 rounded-[10px] border text-center font-medium transition ' + (selectedMode === 'Weekend' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400')">
+            Weekend
+          </button>
+        </div>
+      </div>
+
+      <!-- Campus Hub Selection -->
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Campus Location</label>
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 text-xs space-y-1.5">
+          <div class="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-medium">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Bangalore (BTM Campus)</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-medium">
+            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+            <span>Chennai (OMR Campus)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- RESULTS GRID (Right Column)                                           -->
+    <!-- ===================================================================== -->
+    <div class="lg:col-span-9 space-y-6">
+      
+      <!-- Results Controls Bar -->
+      <div class="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400 px-1">
+        <span>Showing <strong class="text-slate-900 dark:text-white">{{ filteredCourses.length }}</strong> certified courses</span>
+        <div class="flex items-center gap-2 text-xs">
+          <span class="text-slate-400 font-medium">Sort:</span>
+          <select [(ngModel)]="sortBy"
+            class="h-9 px-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-medium text-slate-800 dark:text-slate-200 outline-none cursor-pointer">
+            <option value="popular">Most Popular</option>
+            <option value="rating">Highest Rated</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Course Cards Grid (No Price / Duration Displayed) -->
+      <div *ngIf="filteredCourses.length > 0; else emptyCoursesState"
+        class="grid grid-cols-1 md:grid-cols-2 gap-6"
+        motionFlipGrid>
+        <div *ngFor="let course of filteredCourses; let i = index"
+          motionReveal="fade-up" [motionStaggerIndex]="i"
+          class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition flex flex-col justify-between overflow-hidden motion-hover-lift">
+          
+          <div class="p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/80 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-semibold uppercase">
+                {{ course.badge || 'Certified Career Track' }}
+              </span>
+              <span class="text-xs font-medium text-slate-500 dark:text-slate-400">★ {{ course.rating || 4.9 }} ({{ course.ratingCount || 280 }})</span>
+            </div>
+
+            <div class="space-y-1.5">
+              <h3 class="text-xl font-semibold text-slate-900 dark:text-white leading-snug">
+                {{ course.title }}
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-2">
+                {{ course.description }}
+              </p>
+            </div>
+
+            <!-- Batch & Seats Info -->
+            <div class="space-y-1.5 pt-1">
+              <div class="flex justify-between text-xs font-medium">
+                <span class="text-slate-500">Next Batch: <strong class="text-slate-800 dark:text-slate-200">{{ course.batches?.[0] || 'Starting Next Monday' }}</strong></span>
+                <span class="text-indigo-600 dark:text-indigo-400 font-semibold">{{ course.capacity - (course.enrolledCount || 18) }} Seats Left</span>
+              </div>
+              <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-indigo-600 h-full rounded-full motion-progress-bar"
+                  [style.width]="((course.enrolledCount || 18) / course.capacity * 100) + '%'"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-1 pt-1">
+              <span *ngFor="let item of (course.syllabus || []).slice(0, 4)"
+                class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium">
+                {{ item }}
+              </span>
+            </div>
           </div>
 
-          <!-- Features -->
-          <div class="flex flex-wrap gap-2">
-            <span *ngFor="let feature of course.features" class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">
-              {{ feature }}
-            </span>
-          </div>
+          <!-- Card Footer (Fee / Price Hidden) -->
+          <div class="p-5 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 block">100% Placement</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400">Classroom & Online</span>
+            </div>
 
-          <!-- Enrollment Button -->
-          <div class="flex gap-2 pt-2 mt-auto">
-            <button *ngIf="userEnrolls.includes(course.id); else enrollBtn" disabled
-              class="flex-1 bg-gray-300 text-gray-600 py-2 rounded-lg font-semibold text-sm cursor-not-allowed">
-              Enrolled
-            </button>
-            <ng-template #enrollBtn>
-              <button (click)="enrollCourse(course.id); $event.stopPropagation()"
-                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold text-sm transition-all">
-                Enroll Now
+            <div class="flex items-center gap-2">
+              <button (click)="openCourseDetail(course)"
+                class="h-10 px-3.5 rounded-[10px] bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium border border-slate-200 dark:border-slate-700 transition">
+                Syllabus
               </button>
-            </ng-template>
+              <button (click)="startEnrollment(course)"
+                class="h-10 px-4 rounded-[10px] bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium shadow-sm transition">
+                Enroll Now &rarr;
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Empty State Template -->
+      <ng-template #emptyCoursesState>
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-12 text-center space-y-4 shadow-sm">
+          <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">No courses match your filters</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Try adjusting your keyword search or category filters.</p>
+          </div>
+          <button (click)="resetFilters()"
+            class="h-10 px-5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-[10px] shadow-sm transition">
+            Reset All Filters
+          </button>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- COURSE DETAIL MODAL                                                       -->
+  <!-- ========================================================================= -->
+  <div *ngIf="detailCourse"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4 animate-fade-in motion-modal-backdrop">
+    <div role="dialog" aria-modal="true" aria-label="Course Curriculum & Batches"
+      data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true"
+      class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col max-h-[90vh] my-auto motion-modal-dialog">
+      
+      <div class="bg-slate-900 text-white p-6 flex justify-between items-start shrink-0">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">{{ detailCourse.category || 'Career Track' }}</span>
+          <h2 class="text-2xl font-semibold mt-1">{{ detailCourse.title }}</h2>
+          <p class="text-xs text-slate-300 mt-1">Bangalore & Chennai Hubs • 100% Placement Assurance</p>
+        </div>
+        <button (click)="closeCourseDetail()" class="text-white/80 hover:text-white text-2xl font-bold">&times;</button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700 dark:text-slate-300 flex-1">
+        <div class="space-y-3">
+          <h4 class="font-semibold text-slate-900 dark:text-white uppercase tracking-wider text-xs">Curriculum Modules:</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div *ngFor="let mod of detailCourse.syllabus; let i = index"
+              class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-semibold text-xs flex items-center justify-center">{{ i + 1 }}</span>
+                <strong class="text-slate-900 dark:text-white font-medium text-sm">{{ mod }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-semibold text-slate-900 dark:text-white uppercase tracking-wider text-xs">Batch Timings:</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 space-y-1">
+              <strong class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 block">Weekday Batches</strong>
+              <p class="text-slate-600 dark:text-slate-400">7:30 AM – 9:30 AM / 7:00 PM – 9:00 PM</p>
+            </div>
+            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 space-y-1">
+              <strong class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 block">Weekend Batches</strong>
+              <p class="text-slate-600 dark:text-slate-400">Saturday & Sunday 10:00 AM – 2:00 PM</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Course Detail Modal -->
-  <div *ngIf="selectedCourse" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-2xl p-8 max-w-2xl max-h-[80vh] overflow-y-auto">
-      <h2 class="text-3xl font-bold text-slate-900 mb-4">
-        {{ selectedCourse.title }}
-      </h2>
-
-      <div class="space-y-4">
-        <p><strong>Trainer:</strong> {{ selectedCourse.trainerName }}</p>
-        <p><strong>Duration:</strong> {{ selectedCourse.duration }}</p>
-        <p><strong>Description:</strong> {{ selectedCourse.description }}</p>
-
+      <div class="p-4 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
         <div>
-          <strong>Syllabus:</strong>
-          <ul class="list-disc list-inside mt-2 space-y-1">
-            <li *ngFor="let item of selectedCourse.syllabus">{{ item }}</li>
-          </ul>
+          <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 block">Classroom & Online</span>
+          <div class="text-sm font-medium text-slate-700 dark:text-slate-300">Bangalore & Chennai Hubs</div>
         </div>
-
-        <div class="flex gap-4 pt-4">
-          <button (click)="enrollCourse(selectedCourse.id)"
-            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition-all">
-            Enroll Now
-          </button>
-          <button (click)="selectedCourse = null"
-            class="px-6 py-3 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all">
-            Close
+        <div class="flex items-center gap-3">
+          <button (click)="closeCourseDetail()" class="h-10 px-4 border rounded-[10px] text-xs font-medium">Close</button>
+          <button (click)="closeCourseDetail(); startEnrollment(detailCourse)"
+            class="h-10 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-[10px] text-xs shadow-sm">
+            Enroll in Batch &rarr;
           </button>
         </div>
       </div>
+
     </div>
   </div>
+
+  <!-- ========================================================================= -->
+  <!-- 4-STEP ENROLLMENT STEPPER MODAL                                           -->
+  <!-- ========================================================================= -->
+  <div *ngIf="showEnrollModal && enrollCourseTarget"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4 animate-fade-in motion-modal-backdrop">
+    <div role="dialog" aria-modal="true" aria-label="Fast-Track Admission"
+      data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true"
+      class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-lg w-full overflow-hidden flex flex-col my-auto motion-modal-dialog">
+      
+      <div class="bg-slate-900 text-white p-6 shrink-0">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Fast-Track Admission</span>
+            <h3 class="text-xl font-semibold mt-1">{{ enrollCourseTarget.title }}</h3>
+            <p class="text-xs text-slate-300">Live Mentorship • 100% Placement Assurance</p>
+          </div>
+          <button (click)="closeEnrollModal()" class="text-white/80 hover:text-white text-2xl font-bold">&times;</button>
+        </div>
+
+        <!-- 3 Step Indicator -->
+        <div class="flex items-center gap-2 mt-4 pt-3 border-t border-slate-800 text-xs font-medium">
+          <span [class]="'px-2.5 py-0.5 rounded-full ' + (enrollStep >= 1 ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400')">1. Details</span>
+          <span>&rarr;</span>
+          <span [class]="'px-2.5 py-0.5 rounded-full ' + (enrollStep >= 2 ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400')">2. Batch Timing</span>
+          <span>&rarr;</span>
+          <span [class]="'px-2.5 py-0.5 rounded-full ' + (enrollStep === 3 ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400')">3. Confirmed</span>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-5 text-sm">
+        <!-- Step 1: Candidate Info -->
+        <div *ngIf="enrollStep === 1" class="space-y-4 animate-fade-in">
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Full Name <span class="text-rose-500">*</span></label>
+            <input type="text" [(ngModel)]="enrollName" required placeholder="e.g. Rahul Sharma"
+              class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address <span class="text-rose-500">*</span></label>
+            <input type="email" [(ngModel)]="enrollEmail" required placeholder="e.g. rahul@gmail.com"
+              class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Contact Number <span class="text-rose-500">*</span></label>
+            <input type="tel" [(ngModel)]="enrollPhone" required placeholder="+91 98765 43210"
+              class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+
+          <button type="button" (click)="goToEnrollStep(2)"
+            class="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-[10px] text-sm shadow transition">
+            Next: Select Batch Timing &rarr;
+          </button>
+        </div>
+
+        <!-- Step 2: Batch Selection -->
+        <div *ngIf="enrollStep === 2" class="space-y-4 animate-fade-in">
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 block">Choose Batch Timing:</span>
+          
+          <div class="space-y-2">
+            <label (click)="enrollBatchTiming = 'Weekday Evening (7:00 PM - 9:00 PM)'"
+              [class]="'p-3.5 rounded-xl border cursor-pointer flex items-center justify-between transition ' + (enrollBatchTiming.includes('Evening') ? 'bg-indigo-50 dark:bg-indigo-950 border-indigo-600' : 'border-slate-200 dark:border-slate-700')">
+              <div>
+                <strong class="text-sm font-semibold block">Weekday Evening Batch</strong>
+                <span class="text-xs text-slate-500">7:00 PM – 9:00 PM (Mon to Fri)</span>
+              </div>
+              <span class="text-xs font-semibold text-indigo-600">Starting Monday</span>
+            </label>
+
+            <label (click)="enrollBatchTiming = 'Weekend Intensive (Saturday & Sunday)'"
+              [class]="'p-3.5 rounded-xl border cursor-pointer flex items-center justify-between transition ' + (enrollBatchTiming.includes('Weekend') ? 'bg-indigo-50 dark:bg-indigo-950 border-indigo-600' : 'border-slate-200 dark:border-slate-700')">
+              <div>
+                <strong class="text-sm font-semibold block">Weekend Intensive Batch</strong>
+                <span class="text-xs text-slate-500">10:00 AM – 2:00 PM (Sat & Sun)</span>
+              </div>
+              <span class="text-xs font-semibold text-indigo-600">This Saturday</span>
+            </label>
+          </div>
+
+          <div class="flex items-center gap-2 pt-2">
+            <button type="button" (click)="goToEnrollStep(1)" class="h-12 px-4 bg-slate-100 dark:bg-slate-800 font-medium rounded-[10px] text-xs">&larr; Back</button>
+            <button type="button" (click)="submitEnrollment()" [disabled]="isEnrolling"
+              class="flex-1 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-[10px] text-sm shadow transition disabled:opacity-75">
+              {{ isEnrolling ? 'Confirming...' : 'Confirm Admission &rarr;' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Done -->
+        <div *ngIf="enrollStep === 3" class="space-y-4 text-center py-2 animate-fade-in">
+          <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+            ✓
+          </div>
+          <h4 class="text-xl font-semibold text-slate-900 dark:text-white">Admission Confirmed!</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400">
+            Congratulations {{ enrollName }}. Your seat in {{ enrollCourseTarget.title }} is reserved.
+          </p>
+          <button (click)="closeEnrollModal()" class="w-full h-12 bg-indigo-600 text-white font-medium rounded-[10px] text-sm">
+            Done & Return to Courses
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>

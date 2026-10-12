@@ -35,6 +35,52 @@ public class DataSeeder implements CommandLineRunner {
             seedSystemLog();
         }
 
+        // Always ensure frontdesk users exist for telecalling & admissions desk logins
+        if (!userRepository.existsById("u-frontdesk")) {
+            User frontdesk1 = new User();
+            frontdesk1.setId("u-frontdesk");
+            frontdesk1.setName("Ms. Sneha Reddy (Admissions Follow-up)");
+            frontdesk1.setEmail("frontdesk@tvktechs.com");
+            frontdesk1.setPassword("password123");
+            frontdesk1.setRole("frontdesk");
+            frontdesk1.setApprovalStatus("approved");
+            frontdesk1.setAttendanceStatus("ON_DUTY");
+            frontdesk1.setSpecialization("Student Admissions & Telecaller");
+            frontdesk1.setStrongTechnologies("Lead Follow-up, Counseling, Student Outreach");
+            frontdesk1.setCreatedAt(Instant.now().toString());
+            userRepository.save(frontdesk1);
+        }
+
+        if (!userRepository.existsById("u-frontdesk2")) {
+            User frontdesk2 = new User();
+            frontdesk2.setId("u-frontdesk2");
+            frontdesk2.setName("Mr. Karthik Varma (Career Counselor)");
+            frontdesk2.setEmail("karthik.counselor@tvktechs.com");
+            frontdesk2.setPassword("password123");
+            frontdesk2.setRole("frontdesk");
+            frontdesk2.setApprovalStatus("approved");
+            frontdesk2.setAttendanceStatus("ON_DUTY");
+            frontdesk2.setSpecialization("Telecalling & Technical Counseling");
+            frontdesk2.setStrongTechnologies("Career Guidance, Batch Scheduling");
+            frontdesk2.setCreatedAt(Instant.now().toString());
+            userRepository.save(frontdesk2);
+        }
+
+        if (!userRepository.existsById("u-frontdesk3")) {
+            User frontdesk3 = new User();
+            frontdesk3.setId("u-frontdesk3");
+            frontdesk3.setName("Ms. Divya Menon (Admissions Lead)");
+            frontdesk3.setEmail("divya.admissions@tvktechs.com");
+            frontdesk3.setPassword("password123");
+            frontdesk3.setRole("frontdesk");
+            frontdesk3.setApprovalStatus("approved");
+            frontdesk3.setAttendanceStatus("ON_DUTY");
+            frontdesk3.setSpecialization("Admissions & Corporate Outreach");
+            frontdesk3.setStrongTechnologies("Candidate Conversion, Fee Processing");
+            frontdesk3.setCreatedAt(Instant.now().toString());
+            userRepository.save(frontdesk3);
+        }
+
         // Always check-seed courses to populate new ones
         seedCourses();
     }
@@ -47,66 +93,181 @@ public class DataSeeder implements CommandLineRunner {
         admin.setPassword("password123");
         admin.setRole("admin");
         admin.setApprovalStatus("approved");
-        admin.setCreatedAt(Instant.now().toString());
+        admin.setCreatedAt(Instant.now().minusSeconds(864000).toString());
         userRepository.save(admin);
 
         User trainer1 = new User();
         trainer1.setId("u-trainer1");
-        trainer1.setName("Mr. Satish Raghavan (Sr. Java Architect)");
+        trainer1.setName("Mr. Satish Raghavan");
         trainer1.setEmail("trainer.java@tvktechs.com");
         trainer1.setPassword("password123");
         trainer1.setRole("trainer");
         trainer1.setApprovalStatus("approved");
-        trainer1.setSpecialization("Enterprise Java Architect");
-        trainer1.setStrongTechnologies("Core Java, Spring Boot, Hibernate");
-        trainer1.setCreatedAt(Instant.now().toString());
+        trainer1.setAttendanceStatus("ON_DUTY");
+        trainer1.setSpecialization("Enterprise Java & Spring Cloud Architect");
+        trainer1.setStrongTechnologies("Core Java, Spring Boot, Microservices, Hibernate, AWS");
+        trainer1.setCreatedAt(Instant.now().minusSeconds(777600).toString());
         userRepository.save(trainer1);
 
         User trainer2 = new User();
         trainer2.setId("u-trainer2");
-        trainer2.setName("Ms. Priyanka Sen (Frontend UX Specialist)");
+        trainer2.setName("Ms. Priyanka Sen");
         trainer2.setEmail("trainer.angular@tvktechs.com");
         trainer2.setPassword("password123");
         trainer2.setRole("trainer");
         trainer2.setApprovalStatus("approved");
-        trainer2.setSpecialization("Frontend & UI/UX Expert");
-        trainer2.setStrongTechnologies("Angular, React, Tailwind CSS");
-        trainer2.setCreatedAt(Instant.now().toString());
+        trainer2.setAttendanceStatus("ON_DUTY");
+        trainer2.setSpecialization("Frontend UX & Modern Angular Lead");
+        trainer2.setStrongTechnologies("Angular 17+, TypeScript, RxJS, Tailwind CSS, Next.js");
+        trainer2.setCreatedAt(Instant.now().minusSeconds(691200).toString());
         userRepository.save(trainer2);
 
+        // Candidate 1 (Oldest - 8 days ago)
         User student1 = new User();
         student1.setId("u-student1");
         student1.setName("Rahul Bose");
-        student1.setEmail("rahul.b@gmail.com");
+        student1.setEmail("rahul.bose@gmail.com");
         student1.setPassword("password123");
         student1.setRole("student");
+        student1.setTrackType("job");
+        student1.setTargetCourse("Java with Angular: Professional Full Stack Developer");
         student1.setApprovalStatus("approved");
         student1.setPaymentStatus("paid");
         student1.setBatchNumber("B-2026-WKND-1");
         student1.setAssignedTrainer("Mr. Satish Raghavan");
-        student1.setContactNum("+91 9900990099");
+        student1.setContactNum("+91 9845012345");
+        student1.setPersonalPhone("+91 9845012345");
         student1.setCollegeName("IIT Bombay");
-        student1.setBranch("Computer Science");
-        student1.setAcademicStatus("Graduated (Looking for Job)");
-        student1.setCreatedAt(Instant.now().toString());
+        student1.setBranch("Computer Science & Engineering");
+        student1.setAcademicStatus("Graduated (Looking for Placement)");
+        student1.setPreferredLocation("Bangalore");
+        student1.setCity("Bangalore");
+        student1.setFollowUpStatus("Contacted");
+        student1.setAssignedCounselorId("u-frontdesk");
+        student1.setCreatedAt(Instant.now().minusSeconds(691200).toString());
         userRepository.save(student1);
 
+        // Candidate 2 (7 days ago)
         User student2 = new User();
         student2.setId("u-student2");
         student2.setName("Ananya Rao");
-        student2.setEmail("ananya.r@gmail.com");
+        student2.setEmail("ananya.rao@gmail.com");
         student2.setPassword("password123");
         student2.setRole("student");
+        student2.setTrackType("internship");
+        student2.setTargetCourse("Angular 17+ Modern Web Applications");
         student2.setApprovalStatus("pending");
         student2.setPaymentStatus("yet to pay");
         student2.setBatchNumber("B-2026-WKDAY-2");
         student2.setAssignedTrainer("Ms. Priyanka Sen");
-        student2.setContactNum("+91 8877665544");
+        student2.setContactNum("+91 9886098765");
+        student2.setPersonalPhone("+91 9886098765");
         student2.setCollegeName("NIT Trichy");
         student2.setBranch("Information Technology");
-        student2.setAcademicStatus("Pursuing (4th Year)");
-        student2.setCreatedAt(Instant.now().toString());
+        student2.setAcademicStatus("Pursuing (Final Year)");
+        student2.setPreferredLocation("Chennai");
+        student2.setCity("Chennai");
+        student2.setFollowUpStatus("Need to Contact");
+        student2.setAssignedCounselorId("u-frontdesk2");
+        student2.setCreatedAt(Instant.now().minusSeconds(604800).toString());
         userRepository.save(student2);
+
+        // Candidate 3 (5 days ago)
+        User student3 = new User();
+        student3.setId("u-student3");
+        student3.setName("Vikram Sen");
+        student3.setEmail("vikram.sen@outlook.com");
+        student3.setPassword("password123");
+        student3.setRole("student");
+        student3.setTrackType("job");
+        student3.setTargetCourse("Enterprise Spring Boot & Microservices");
+        student3.setApprovalStatus("approved");
+        student3.setPaymentStatus("paid");
+        student3.setBatchNumber("B-2026-WKND-1");
+        student3.setAssignedTrainer("Mr. Satish Raghavan");
+        student3.setContactNum("+91 9742055667");
+        student3.setPersonalPhone("+91 9742055667");
+        student3.setCollegeName("RV College of Engineering");
+        student3.setBranch("Electronics & Communication");
+        student3.setAcademicStatus("Graduated (2024 Batch)");
+        student3.setPreferredLocation("Bangalore");
+        student3.setCity("Bangalore");
+        student3.setFollowUpStatus("Interested");
+        student3.setAssignedCounselorId("u-frontdesk");
+        student3.setCreatedAt(Instant.now().minusSeconds(432000).toString());
+        userRepository.save(student3);
+
+        // Candidate 4 (3 days ago)
+        User student4 = new User();
+        student4.setId("u-student4");
+        student4.setName("Sneha Nair");
+        student4.setEmail("sneha.nair@gmail.com");
+        student4.setPassword("password123");
+        student4.setRole("student");
+        student4.setTrackType("internship");
+        student4.setTargetCourse("Java with Angular: Professional Full Stack Developer");
+        student4.setApprovalStatus("pending");
+        student4.setPaymentStatus("yet to pay");
+        student4.setBatchNumber("B-2026-WKDAY-2");
+        student4.setContactNum("+91 9443011223");
+        student4.setPersonalPhone("+91 9443011223");
+        student4.setCollegeName("Anna University");
+        student4.setBranch("Computer Science");
+        student4.setAcademicStatus("Pursuing (3rd Year)");
+        student4.setPreferredLocation("Chennai");
+        student4.setCity("Chennai");
+        student4.setFollowUpStatus("Ready to Join");
+        student4.setAssignedCounselorId("u-frontdesk3");
+        student4.setCreatedAt(Instant.now().minusSeconds(259200).toString());
+        userRepository.save(student4);
+
+        // Candidate 5 (2 days ago)
+        User student5 = new User();
+        student5.setId("u-student5");
+        student5.setName("Aditya Verma");
+        student5.setEmail("aditya.verma@gmail.com");
+        student5.setPassword("password123");
+        student5.setRole("student");
+        student5.setTrackType("job");
+        student5.setTargetCourse("Enterprise AI & Intelligent Systems Specialist");
+        student5.setApprovalStatus("approved");
+        student5.setPaymentStatus("partial");
+        student5.setBatchNumber("B-2026-WKND-2");
+        student5.setAssignedTrainer("Mr. Satish Raghavan");
+        student5.setContactNum("+91 9916044332");
+        student5.setPersonalPhone("+91 9916044332");
+        student5.setCollegeName("PES University");
+        student5.setBranch("Data Science & AI");
+        student5.setAcademicStatus("Graduated (Looking for Career Switch)");
+        student5.setPreferredLocation("Bangalore");
+        student5.setCity("Bangalore");
+        student5.setFollowUpStatus("Contacted");
+        student5.setAssignedCounselorId("u-frontdesk");
+        student5.setCreatedAt(Instant.now().minusSeconds(172800).toString());
+        userRepository.save(student5);
+
+        // Candidate 6 (Newest - Today)
+        User student6 = new User();
+        student6.setId("u-student6");
+        student6.setName("Pooja Iyer");
+        student6.setEmail("pooja.iyer@outlook.com");
+        student6.setPassword("password123");
+        student6.setRole("student");
+        student6.setTrackType("job");
+        student6.setTargetCourse("Java with Angular: Professional Full Stack Developer");
+        student6.setApprovalStatus("pending");
+        student6.setPaymentStatus("yet to pay");
+        student6.setBatchNumber("B-2026-WKND-1");
+        student6.setContactNum("+91 9820066778");
+        student6.setPersonalPhone("+91 9820066778");
+        student6.setCollegeName("BMS College of Engineering");
+        student6.setBranch("Information Science");
+        student6.setAcademicStatus("Graduated (2025)");
+        student6.setPreferredLocation("Bangalore");
+        student6.setCity("Bangalore");
+        student6.setFollowUpStatus("Need to Contact");
+        student6.setCreatedAt(Instant.now().minusSeconds(14400).toString());
+        userRepository.save(student6);
     }
 
     private void seedCourses() {
@@ -134,7 +295,7 @@ public class DataSeeder implements CommandLineRunner {
             javaFullStack.setCapacity(30);
             javaFullStack.setEnrolledCount(12);
             javaFullStack.setIsLive(true);
-            javaFullStack.setPrice("$299 (Flexible EMI Options)");
+            javaFullStack.setPrice("₹ 34,999 (Flexible EMI Options)");
             courseRepository.save(javaFullStack);
         }
 
@@ -156,7 +317,7 @@ public class DataSeeder implements CommandLineRunner {
             springMicro.setCapacity(25);
             springMicro.setEnrolledCount(8);
             springMicro.setIsLive(true);
-            springMicro.setPrice("$199");
+            springMicro.setPrice("₹ 24,999");
             courseRepository.save(springMicro);
         }
 
@@ -178,53 +339,58 @@ public class DataSeeder implements CommandLineRunner {
             angularPro.setCapacity(25);
             angularPro.setEnrolledCount(9);
             angularPro.setIsLive(true);
-            angularPro.setPrice("$149");
+            angularPro.setPrice("₹ 18,999");
             courseRepository.save(angularPro);
         }
 
-        if (!courseRepository.existsById("c-python-dev")) {
-            Course pythonDev = new Course();
-            pythonDev.setId("c-python-dev");
-            pythonDev.setTitle("Python Developer: Professional Automation & Web");
-            pythonDev.setDescription("Build scalable web backends, data processors, and task automation scripts using Python, Django, and Flask.");
-            pythonDev.setDuration("8 Weeks");
-            pythonDev.setTrainerName("TBD / Guest Specialist");
-            pythonDev.setFeatures(Arrays.asList("Automation Projects", "Python OOPs", "Mock Interviews"));
-            pythonDev.setSyllabus(Arrays.asList(
-                    "Python Syntax & OOPs Core Principles",
-                    "Django Web Framework & Routing",
-                    "Database Integration with PostgreSQL & SQLite",
-                    "Web Scraping & Script Automation",
-                    "REST API Design & Deployment"
+        // Remove legacy python course if present
+        if (courseRepository.existsById("c-python-dev")) {
+            courseRepository.deleteById("c-python-dev");
+        }
+
+        if (!courseRepository.existsById("c-spring-microservices")) {
+            Course springMicro = new Course();
+            springMicro.setId("c-spring-microservices");
+            springMicro.setTitle("Spring Boot Microservices & Cloud Architecture");
+            springMicro.setDescription("Design high-throughput distributed microservices with Spring Boot 3, Spring Cloud Gateway, Kafka messaging, and PostgreSQL.");
+            springMicro.setDuration("10 Weeks");
+            springMicro.setTrainerName("Mr. Satish Raghavan");
+            springMicro.setFeatures(Arrays.asList("Microservices Architecture", "Kafka Streaming", "Docker & Kubernetes"));
+            springMicro.setSyllabus(Arrays.asList(
+                    "Spring Boot 3 Core & RESTful API Design",
+                    "Spring Cloud Netflix Eureka, Config Server & API Gateway",
+                    "Event-Driven Architecture with Apache Kafka",
+                    "Distributed Tracing with Micrometer & Zipkin",
+                    "Resilience Patterns with Resilience4j & Container Deployments"
             ));
-            pythonDev.setBatches(Arrays.asList("Weekend Batch (3 PM - 6 PM)", "Weekday Batch (6 PM - 8 PM)"));
-            pythonDev.setCapacity(25);
-            pythonDev.setEnrolledCount(0);
-            pythonDev.setIsLive(true);
-            pythonDev.setPrice("$199");
-            courseRepository.save(pythonDev);
+            springMicro.setBatches(Arrays.asList("Weekend Batch (3 PM - 6 PM)", "Weekday Batch (6 PM - 8 PM)"));
+            springMicro.setCapacity(25);
+            springMicro.setEnrolledCount(0);
+            springMicro.setIsLive(true);
+            springMicro.setPrice("₹ 27,999");
+            courseRepository.save(springMicro);
         }
 
         if (!courseRepository.existsById("c-ai-datascience")) {
             Course aiData = new Course();
             aiData.setId("c-ai-datascience");
-            aiData.setTitle("AI & Data Science Specialist");
-            aiData.setDescription("Learn mathematics for machine learning, Python data pipelines, deep neural networks, and model deployment.");
+            aiData.setTitle("Enterprise AI & Intelligent Systems Specialist");
+            aiData.setDescription("Master machine learning algorithms, deep neural networks, enterprise data pipelines, and LLM model deployment.");
             aiData.setDuration("12 Weeks");
             aiData.setTrainerName("Mr. Satish Raghavan");
-            aiData.setFeatures(Arrays.asList("Machine Learning Projects", "Neural Networks", "Hands-on Labs"));
+            aiData.setFeatures(Arrays.asList("Machine Learning Projects", "Deep Learning Architectures", "Hands-on Labs"));
             aiData.setSyllabus(Arrays.asList(
-                    "Data Preprocessing with Pandas & NumPy",
-                    "Supervised & Unsupervised Machine Learning",
-                    "Neural Networks & Deep Learning with TensorFlow",
-                    "Model Evaluation & Hyperparameter Tuning",
-                    "Production Deployment & API Serving"
+                    "Mathematical Foundations of Machine Learning & Statistics",
+                    "Supervised & Unsupervised Learning Algorithms",
+                    "Deep Neural Networks & Convolutional Architectures",
+                    "Model Evaluation, Vector Databases & Hyperparameter Tuning",
+                    "Production Cloud Deployment & High-Throughput REST Serving"
             ));
             aiData.setBatches(Arrays.asList("Weekend Batch (9 AM - 1 PM)", "Weekday Batch (8 PM - 10 PM)"));
             aiData.setCapacity(30);
             aiData.setEnrolledCount(0);
             aiData.setIsLive(true);
-            aiData.setPrice("$299");
+            aiData.setPrice("₹ 32,999");
             courseRepository.save(aiData);
         }
 

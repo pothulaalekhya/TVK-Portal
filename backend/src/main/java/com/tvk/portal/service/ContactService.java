@@ -42,6 +42,11 @@ public class ContactService {
                     "Please fill out the name, email, and inquiry description fields.");
         }
 
+        if (!AuthService.isValidEmail(email)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Please enter a valid email address (e.g. name@example.com).");
+        }
+
         ContactRequest contact = new ContactRequest();
         contact.setId("cnt-" + System.currentTimeMillis());
         contact.setName(name);

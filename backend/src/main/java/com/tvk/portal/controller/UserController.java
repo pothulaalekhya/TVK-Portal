@@ -13,10 +13,34 @@ public class UserController {
 
     @Autowired private UserService userService;
 
+    /** POST /api/users/approve */
+    @PostMapping("/approve")
+    public ResponseEntity<Map<String, Object>> approveUser(@RequestBody Map<String, Object> body) {
+        return ResponseEntity.ok(userService.approveCandidate(body));
+    }
+
+    /** POST /api/users/reject */
+    @PostMapping("/reject")
+    public ResponseEntity<Map<String, Object>> rejectUser(@RequestBody Map<String, Object> body) {
+        return ResponseEntity.ok(userService.rejectCandidate(body));
+    }
+
+    /** POST /api/users/regenerate-temp-password */
+    @PostMapping("/regenerate-temp-password")
+    public ResponseEntity<Map<String, Object>> regenerateTempPassword(@RequestBody Map<String, Object> body) {
+        return ResponseEntity.ok(userService.regenerateTempPassword(body));
+    }
+
     /** POST /api/users/update */
     @PostMapping("/update")
     public ResponseEntity<Map<String, Object>> updateUser(@RequestBody Map<String, Object> body) {
         return ResponseEntity.ok(userService.updateUser(body));
+    }
+
+    /** POST /api/users/transition-role */
+    @PostMapping("/transition-role")
+    public ResponseEntity<Map<String, Object>> transitionUserRole(@RequestBody Map<String, Object> body) {
+        return ResponseEntity.ok(userService.transitionUserRole(body));
     }
 
     /** DELETE /api/users/:id */

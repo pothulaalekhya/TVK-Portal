@@ -55,8 +55,46 @@ const defaultDb: LocalDb = {
       createdAt: new Date().toISOString(),
     },
     {
+      id: "u-frontdesk",
+      name: "Ms. Sneha Reddy (Admissions Follow-up)",
+      email: "frontdesk@tvktechs.com",
+      password: "password123",
+      role: "frontdesk",
+      approvalStatus: "approved",
+      attendanceStatus: "ON_DUTY",
+      specialization: "Student Admissions & Telecaller",
+      strongTechnologies: "Lead Follow-up, Counseling, Student Outreach",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "u-frontdesk2",
+      name: "Mr. Karthik Varma (Career Counselor)",
+      email: "karthik.counselor@tvktechs.com",
+      password: "password123",
+      role: "frontdesk",
+      approvalStatus: "approved",
+      attendanceStatus: "ON_DUTY",
+      specialization: "Telecalling & Technical Counseling",
+      strongTechnologies: "Career Guidance, Batch Scheduling",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "u-frontdesk3",
+      name: "Ms. Divya Menon (Admissions Lead)",
+      email: "divya.admissions@tvktechs.com",
+      password: "password123",
+      role: "frontdesk",
+      approvalStatus: "approved",
+      attendanceStatus: "ON_DUTY",
+      specialization: "Admissions & Corporate Outreach",
+      strongTechnologies: "Candidate Conversion, Fee Processing",
+      createdAt: new Date().toISOString(),
+    },
+    {
       id: "u-student1",
       name: "Rahul Bose",
+      firstName: "Rahul",
+      lastName: "Bose",
       email: "rahul.b@gmail.com",
       password: "password123",
       role: "student",
@@ -64,15 +102,28 @@ const defaultDb: LocalDb = {
       paymentStatus: "paid",
       batchNumber: "B-2026-WKND-1",
       assignedTrainer: "Mr. Satish Raghavan",
-      contactNum: "+91 9876543210",
+      contactNum: "9876543210",
+      emergencyContactNum: "9876543211",
+      preferredLocation: "Bengaluru",
+      trainingTrack: "Full Stack Java Developer with Angular",
+      programCategory: "internship",
+      selectedSkills: ["Core Java", "Spring Boot", "Angular"],
+      availableFromDate: "2026-10-01",
       collegeName: "IIT Madras",
       branch: "Computer Science",
       academicStatus: "Graduated",
+      followUpStatus: "Ready to Join",
+      candidateReply: "Ready for upcoming weekend batch. Fees processed.",
+      followUpDate: "2026-09-28",
+      whatsappStatus: "Opened",
+      assignedCounselor: "Sneha Reddy",
       createdAt: new Date().toISOString(),
     },
     {
       id: "u-student2",
       name: "Ananya Rao",
+      firstName: "Ananya",
+      lastName: "Rao",
       email: "ananya.r@gmail.com",
       password: "password123",
       role: "student",
@@ -80,10 +131,75 @@ const defaultDb: LocalDb = {
       paymentStatus: "yet to pay",
       batchNumber: "B-2026-WKDAY-2",
       assignedTrainer: "Ms. Priyanka Sen",
-      contactNum: "+91 8877665544",
+      contactNum: "8877665544",
+      emergencyContactNum: "8877665545",
+      preferredLocation: "Chennai",
+      trainingTrack: "Frontend & UI/UX Expert",
+      programCategory: "internship",
+      selectedSkills: ["Angular", "React developer", "HTML & CSS"],
+      availableFromDate: "2026-10-05",
       collegeName: "NIT Trichy",
       branch: "Information Technology",
       academicStatus: "Pursuing (4th Year)",
+      followUpStatus: "Follow-up Needed",
+      candidateReply: "Requested syllabus PDF & timing schedule for weekday morning batch.",
+      followUpDate: "2026-09-26",
+      whatsappStatus: "Opened",
+      assignedCounselor: "Sneha Reddy",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "u-student3",
+      name: "Saranya Murugan",
+      firstName: "Saranya",
+      lastName: "Murugan",
+      email: "saranya.m@gmail.com",
+      password: "password123",
+      role: "student",
+      approvalStatus: "pending",
+      paymentStatus: "yet to pay",
+      contactNum: "9187970815",
+      emergencyContactNum: "9187970816",
+      preferredLocation: "Bengaluru",
+      trainingTrack: "Full Stack Java Developer with Angular",
+      programCategory: "job",
+      selectedSkills: ["Java Developer", "Spring Boot", "React developer"],
+      availableFromDate: "2026-10-10",
+      collegeName: "Anna University",
+      branch: "Computer Science",
+      academicStatus: "Graduated",
+      followUpStatus: "Replied",
+      candidateReply: "Interested in 100% placement support. Will attend demo session tomorrow.",
+      followUpDate: "2026-09-27",
+      whatsappStatus: "Opened",
+      assignedCounselor: "Sneha Reddy",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "u-student4",
+      name: "Manoj Kumar",
+      firstName: "Manoj",
+      lastName: "Kumar",
+      email: "manoj.k@gmail.com",
+      password: "password123",
+      role: "student",
+      approvalStatus: "pending",
+      paymentStatus: "yet to pay",
+      contactNum: "9384092996",
+      emergencyContactNum: "9384092997",
+      preferredLocation: "Chennai",
+      trainingTrack: "Java Full Stack with React",
+      programCategory: "internship",
+      selectedSkills: ["Java Full Stack with React", "Spring Boot"],
+      availableFromDate: "2026-10-15",
+      collegeName: "SRM University",
+      branch: "ECE",
+      academicStatus: "Pursuing (4th Year)",
+      followUpStatus: "Need to Contact",
+      candidateReply: "",
+      followUpDate: "2026-09-26",
+      whatsappStatus: "Unsent",
+      assignedCounselor: "Sneha Reddy",
       createdAt: new Date().toISOString(),
     },
   ],
@@ -340,33 +456,69 @@ async function run() {
       });
     }
 
-    if (user.password && user.password !== password) {
-      return res.status(401).json({ error: "Incorrect password. Please try again." });
+    const status = user.approvalStatus || "PENDING_APPROVAL";
+    if (status.toUpperCase() === "PENDING_APPROVAL" || status.toLowerCase() === "pending") {
+      return res.status(403).json({ error: "Your application is under review. You will receive your login details after approval." });
     }
 
-    if (user.approvalStatus === "pending") {
-      return res.status(403).json({ error: "Account pending admin approval. Please wait until your account is approved." });
+    if (status.toUpperCase() === "REJECTED" || status.toLowerCase() === "rejected") {
+      return res.status(403).json({ error: "Your application was not approved. Please contact the admissions desk." });
     }
 
-    res.json({ success: true, user });
+    const matchRegular = user.password && user.password === password;
+    const matchTemp = user.tempPassword && user.tempPassword === password;
+
+    if (!matchRegular && !matchTemp) {
+      return res.status(401).json({ error: "Incorrect password. First time? Use the temporary password sent to you after approval." });
+    }
+
+    if (matchTemp && !matchRegular) {
+      if (user.tempPasswordExpiresAt) {
+        try {
+          const exp = new Date(user.tempPasswordExpiresAt).getTime();
+          if (Date.now() > exp) {
+            return res.status(403).json({ error: "Your temporary password has expired. Contact admissions to get a new one." });
+          }
+        } catch (e) {}
+      }
+      user.mustChangePassword = true;
+      saveDb(db);
+    }
+
+    res.json({ success: true, user, mustChangePassword: Boolean(user.mustChangePassword) });
   });
 
-  // Auth: Users Registration
+  // Auth: Users Registration (Approval-based Access, No password created)
   app.post("/api/auth/register", (req, res) => {
     const {
+      firstName,
+      lastName,
       name,
       email,
       password,
-      role,
+      role = "student",
+      personalPhone,
+      emergencyPhone,
       contactNum,
+      street,
+      city,
+      state,
+      pincode,
+      address,
+      preferredLocation,
+      trackType,
+      targetCourse,
+      internshipSkills,
+      availabilityToJoin,
+      techStack,
       collegeName,
       branch,
       customBranch,
       academicStatus,
-      address,
       idDetails,
       resumeFileName,
       resumeFileSize,
+      resumeData,
       paymentMode,
       paymentTxnId,
       paymentAmount,
@@ -377,10 +529,10 @@ async function run() {
       strongTechnologies,
     } = req.body;
 
-    if (!name || !email || !password || !role) {
-      return res
-        .status(400)
-        .json({ error: "Name, email, password, and selected role are required fields." });
+    const studentName = name || (firstName && lastName ? `${firstName} ${lastName}` : firstName || "Student");
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is a required field." });
     }
 
     const trimmedEmail = email.toLowerCase().trim();
@@ -396,25 +548,46 @@ async function run() {
         .json({ error: "An account with this email address already exists." });
     }
 
+    const fullAddress = address || [street, city, state, pincode].filter(Boolean).join(", ");
+    const primaryPhone = personalPhone || contactNum || "";
+
+    const isStaff = role !== "student" && password;
+
     const newUser: User = {
       id: `u-${Date.now()}`,
-      name,
+      name: studentName,
+      firstName,
+      lastName,
       email: trimmedEmail,
-      password,
-      role: role as any,
-      approvalStatus: "pending",
+      password: isStaff ? password : undefined,
+      tempPassword: undefined,
+      mustChangePassword: false,
+      role: (role as any) || "student",
+      approvalStatus: isStaff ? "APPROVED" : "PENDING_APPROVAL",
       createdAt: new Date().toISOString(),
 
-      // Institute extra student fields
-      contactNum,
+      personalPhone,
+      emergencyPhone,
+      contactNum: primaryPhone,
+      street,
+      city,
+      state,
+      pincode,
+      address: fullAddress,
+      preferredLocation,
+      trackType,
+      targetCourse,
+      internshipSkills,
+      availabilityToJoin,
+      techStack,
       collegeName,
       branch,
       customBranch,
       academicStatus,
-      address,
       idDetails,
       resumeFileName,
       resumeFileSize,
+      resumeData,
       paymentMode,
       paymentTxnId,
       paymentAmount,
@@ -422,11 +595,13 @@ async function run() {
       isInstituteMember: Boolean(isInstituteMember),
       specialization,
       strongTechnologies,
+      followUpStatus: "Need to Contact",
+      whatsappStatus: "Unsent",
     };
 
     db.users.push(newUser);
 
-    let enrolledCourseTitle = "";
+    let enrolledCourseTitle = targetCourse || "";
     if (role === "student" && courseId) {
       const course = db.courses.find((c) => c.id === courseId);
       if (course) {
@@ -437,7 +612,7 @@ async function run() {
           studentId: newUser.id,
           studentName: newUser.name,
           studentEmail: newUser.email,
-          status: "pending", // starts as pending approval from registrars/trainers
+          status: "pending",
           registeredAt: new Date().toISOString(),
           progress: 0,
         };
@@ -448,20 +623,98 @@ async function run() {
       }
     }
 
-    saveDb(db);
-
-    // Notify about a new user registered!
-    const alertMsg = isInstituteMember
-      ? `🎉 New Student Member '${name}' registered to JOIN THE INSTITUTE for '${enrolledCourseTitle || "Assigned Course"}'! Admissions processing started.`
-      : `New user '${name}' registered as a ${role}.`;
-
-    broadcast("REALTIME_ALERT", { message: alertMsg });
-    broadcast("SYSTEM_STATS_MUTATED", {
-      usersCount: db.users.length,
-      enrollmentsCount: db.enrollments.length,
+    db.systemLog.push({
+      time: new Date().toISOString(),
+      event: "STUDENT_REGISTERED",
+      detail: `Application submitted for ${newUser.name} (${newUser.email}). Status: PENDING_APPROVAL.`,
     });
 
-    res.status(201).json({ success: true, user: newUser });
+    saveDb(db);
+
+    const alertMsg = `🔔 New student application received: '${newUser.name}'. Pending Admissions Approval.`;
+    broadcast("REALTIME_ALERT", { message: alertMsg });
+    broadcast("USER_MUTATED", { user: newUser });
+    broadcast("SYSTEM_STATS_MUTATED", { usersCount: db.users.length });
+
+    res.status(201).json({
+      success: true,
+      message: "Application received. Your login will be enabled once our admissions team approves your application. You will be notified by email/SMS.",
+      user: newUser,
+    });
+  });
+
+  // Auth: Request / Check Temporary Password status
+  app.post("/api/auth/temp-password", (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required." });
+
+    const db = loadDb();
+    const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+    if (!user) {
+      return res.status(404).json({ error: "No registration found with this email." });
+    }
+
+    const status = user.approvalStatus || "PENDING_APPROVAL";
+    if (status.toUpperCase() === "PENDING_APPROVAL" || status.toLowerCase() === "pending") {
+      return res.status(403).json({ error: "Your application is under review. You will receive your login details after approval." });
+    }
+
+    if (status.toUpperCase() === "REJECTED" || status.toLowerCase() === "rejected") {
+      return res.status(403).json({ error: "Your application was not approved. Please contact the admissions desk." });
+    }
+
+    if (user.tempPasswordExpiresAt) {
+      try {
+        const exp = new Date(user.tempPasswordExpiresAt).getTime();
+        if (Date.now() > exp) {
+          return res.status(403).json({ error: "Your temporary password has expired. Contact admissions to get a new one." });
+        }
+      } catch (e) {}
+    }
+
+    res.json({
+      success: true,
+      email: user.email,
+      name: user.name,
+      message: "Your account is approved. Use the temporary password issued by admissions to log in.",
+    });
+  });
+
+  // Auth: Change Password
+  app.post("/api/auth/change-password", (req, res) => {
+    const { email, currentPassword, newPassword } = req.body;
+    if (!email || !newPassword) return res.status(400).json({ error: "Email and new password are required." });
+
+    const db = loadDb();
+    const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+    if (!user) return res.status(404).json({ error: "User not found." });
+
+    if (currentPassword) {
+      const valid = user.password === currentPassword || user.tempPassword === currentPassword;
+      if (!valid) return res.status(401).json({ error: "Current or temporary password does not match." });
+    }
+
+    user.password = newPassword.trim();
+    user.tempPassword = undefined;
+    user.tempPasswordExpiresAt = undefined;
+    user.mustChangePassword = false;
+    user.approvalStatus = "APPROVED";
+
+    db.systemLog.push({
+      time: new Date().toISOString(),
+      event: "PASSWORD_CHANGED",
+      detail: `User ${user.name} (${user.email}) changed password.`,
+    });
+
+    saveDb(db);
+
+    broadcast("USER_MUTATED", { user });
+
+    res.json({
+      success: true,
+      message: "Password set successfully! You can now access your training portal.",
+      user,
+    });
   });
 
   // API Courses List
@@ -748,6 +1001,159 @@ async function run() {
 
     broadcast("USER_MUTATED", { user: db.users[index] });
     res.json({ success: true, user: db.users[index] });
+  });
+
+  // Helper generator for 10-char temp password (letters + numbers + symbol)
+  function generate10CharTempPassword(): string {
+    const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    const lower = "abcdefghijkmnpqrstuvwxyz";
+    const digits = "23456789";
+    const symbols = "@#$%&*!";
+    const all = upper + lower + digits + symbols;
+    let pwd = [
+      upper[Math.floor(Math.random() * upper.length)],
+      lower[Math.floor(Math.random() * lower.length)],
+      digits[Math.floor(Math.random() * digits.length)],
+      symbols[Math.floor(Math.random() * symbols.length)],
+    ];
+    for (let i = 4; i < 10; i++) {
+      pwd.push(all[Math.floor(Math.random() * all.length)]);
+    }
+    return pwd.sort(() => Math.random() - 0.5).join("");
+  }
+
+  // Admin Approve Candidate
+  app.post("/api/users/approve", (req, res) => {
+    const { id, userId, operatorRole = "admin", approvedBy = "Admissions Desk" } = req.body;
+    const targetId = id || userId;
+    if (!targetId) return res.status(400).json({ error: "Candidate ID required." });
+
+    if (!["admin", "frontdesk", "admission_desk"].includes(String(operatorRole).toLowerCase())) {
+      return res.status(403).json({ error: "Permission denied. Only ADMIN or ADMISSION_DESK can approve candidates." });
+    }
+
+    const db = loadDb();
+    const index = db.users.findIndex((u) => u.id === targetId);
+    if (index === -1) return res.status(404).json({ error: "Candidate not found." });
+
+    const rawTempPassword = generate10CharTempPassword();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    db.users[index] = {
+      ...db.users[index],
+      approvalStatus: "APPROVED",
+      tempPassword: rawTempPassword,
+      password: rawTempPassword,
+      mustChangePassword: true,
+      tempPasswordExpiresAt: expiresAt,
+      approvedBy,
+      approvedAt: new Date().toISOString(),
+      rejectionReason: undefined,
+      rejectedBy: undefined,
+      rejectedAt: undefined,
+    };
+
+    db.systemLog.push({
+      time: new Date().toISOString(),
+      event: "CANDIDATE_APPROVED",
+      detail: `Candidate ${db.users[index].name} (${db.users[index].email}) approved by ${approvedBy}. 7-day temporary access key issued.`,
+    });
+
+    saveDb(db);
+    broadcast("USER_MUTATED", { user: db.users[index] });
+
+    res.json({
+      success: true,
+      user: db.users[index],
+      tempPassword: rawTempPassword,
+      expiresAt,
+      message: `Candidate ${db.users[index].name} approved! Temporary password generated.`,
+    });
+  });
+
+  // Admin Reject Candidate
+  app.post("/api/users/reject", (req, res) => {
+    const { id, userId, reason = "Application does not meet current batch requirements.", operatorRole = "admin", rejectedBy = "Admissions Desk" } = req.body;
+    const targetId = id || userId;
+    if (!targetId) return res.status(400).json({ error: "Candidate ID required." });
+
+    if (!["admin", "frontdesk", "admission_desk"].includes(String(operatorRole).toLowerCase())) {
+      return res.status(403).json({ error: "Permission denied. Only ADMIN or ADMISSION_DESK can reject candidates." });
+    }
+
+    const db = loadDb();
+    const index = db.users.findIndex((u) => u.id === targetId);
+    if (index === -1) return res.status(404).json({ error: "Candidate not found." });
+
+    db.users[index] = {
+      ...db.users[index],
+      approvalStatus: "REJECTED",
+      rejectionReason: reason,
+      rejectedBy,
+      rejectedAt: new Date().toISOString(),
+      password: undefined,
+      tempPassword: undefined,
+      tempPasswordExpiresAt: undefined,
+      mustChangePassword: false,
+    };
+
+    db.systemLog.push({
+      time: new Date().toISOString(),
+      event: "CANDIDATE_REJECTED",
+      detail: `Candidate ${db.users[index].name} (${db.users[index].email}) rejected by ${rejectedBy}. Reason: ${reason}`,
+    });
+
+    saveDb(db);
+    broadcast("USER_MUTATED", { user: db.users[index] });
+
+    res.json({
+      success: true,
+      user: db.users[index],
+      message: "Candidate application marked as rejected.",
+    });
+  });
+
+  // Admin Regenerate Temporary Password
+  app.post("/api/users/regenerate-temp-password", (req, res) => {
+    const { id, userId, operatorRole = "admin", operatorName = "Admissions Desk" } = req.body;
+    const targetId = id || userId;
+    if (!targetId) return res.status(400).json({ error: "Candidate ID required." });
+
+    if (!["admin", "frontdesk", "admission_desk"].includes(String(operatorRole).toLowerCase())) {
+      return res.status(403).json({ error: "Permission denied. Only ADMIN or ADMISSION_DESK can regenerate temporary passwords." });
+    }
+
+    const db = loadDb();
+    const index = db.users.findIndex((u) => u.id === targetId);
+    if (index === -1) return res.status(404).json({ error: "Candidate not found." });
+
+    const rawTempPassword = generate10CharTempPassword();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    db.users[index] = {
+      ...db.users[index],
+      tempPassword: rawTempPassword,
+      password: rawTempPassword,
+      mustChangePassword: true,
+      tempPasswordExpiresAt: expiresAt,
+    };
+
+    db.systemLog.push({
+      time: new Date().toISOString(),
+      event: "TEMP_PASSWORD_REGENERATED",
+      detail: `Temporary password regenerated for ${db.users[index].name} (${db.users[index].email}) by ${operatorName}.`,
+    });
+
+    saveDb(db);
+    broadcast("USER_MUTATED", { user: db.users[index] });
+
+    res.json({
+      success: true,
+      user: db.users[index],
+      tempPassword: rawTempPassword,
+      expiresAt,
+      message: `New temporary password generated successfully for ${db.users[index].name}.`,
+    });
   });
 
   app.delete("/api/users/:id", (req, res) => {

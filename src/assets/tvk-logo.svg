@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 105" width="100%" height="100%">
+  <defs>
+    <style>
+      .navy-letter { fill: #242C75; }
+      .cyan-arm { fill: #00A8CC; }
+      .gold-accent { fill: #F59E0B; }
+      .cap-top { fill: #1B2260; }
+      .cap-shadow { fill: #131742; }
+      @media (prefers-color-scheme: dark) {
+        .dark-invert .navy-letter { fill: #FFFFFF; }
+        .dark-invert .cap-top { fill: #E2E8F0; }
+        .dark-invert .cap-shadow { fill: #94A3B8; }
+      }
+    </style>
+  </defs>
+  <g id="tvk-brand-logo">
+    <!-- 'T' - Bold Slab Serif -->
+    <path class="navy-letter" d="
+      M 10 28
+      L 10 42 L 19 42 L 19 36
+      L 41 36
+      L 41 85
+      L 31 85 L 31 92 L 67 92 L 67 85 L 57 85
+      L 57 36
+      L 79 36 L 79 42 L 88 42 L 88 28
+      Z
+    " />
+
+    <!-- 'V' - Bold Slab Serif -->
+    <path class="navy-letter" d="
+      M 85 28
+      L 85 38 L 94 38
+      L 114 85 L 125 85
+      L 145 38 L 154 38 L 154 28
+      L 133 28 L 133 38 L 139 38
+      L 121 78
+      L 103 38 L 109 38 L 109 28
+      Z
+    " />
+
+    <!-- 'K' - Vertical Stem and Serifs -->
+    <path class="navy-letter" d="
+      M 152 28
+      L 152 38 L 161 38
+      L 161 85 L 152 85 L 152 92
+      L 186 92 L 186 85 L 177 85
+      L 177 38 L 186 38 L 186 28
+      Z
+    " />
+
+    <!-- 'K' - Lower Diagonal Leg with Foot Serif -->
+    <path class="navy-letter" d="
+      M 197 61
+      L 223 85 L 217 85 L 217 92
+      L 249 92 L 249 85 L 241 85
+      L 211 55
+      L 197 61
+      Z
+    " />
+
+    <!-- 'K' - Upper Diagonal Arm in Vivid Cyan / Turquoise -->
+    <polygon class="cyan-arm" points="184,65 195,65 238,27 223,27" />
+
+    <!-- Graduation Cap Base Band (Gold / Amber) -->
+    <rect class="gold-accent" x="221" y="21" width="18" height="7" rx="0.8" />
+
+    <!-- Mortarboard Diamond Top -->
+    <polygon class="cap-top" points="230,9 254,15 230,20 206,15" />
+    <polygon class="cap-shadow" points="211,16 230,20.5 249,16 249,17.8 230,22.2 211,17.8" />
+
+    <!-- Gold Button -->
+    <circle class="gold-accent" cx="230" cy="15" r="1.8" />
+
+    <!-- Golden Tassel draping to the right -->
+    <path d="M 230 15 Q 242 13 248 16 L 248 24" fill="none" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" />
+    <circle class="gold-accent" cx="248" cy="25.5" r="2.2" />
+  </g>
+</svg>

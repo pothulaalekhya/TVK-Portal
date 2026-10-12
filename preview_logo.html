@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Logo Preview</title>
+<style>
+  body {
+    background: #f8fafc;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+  }
+  .card {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .card.dark {
+    background: #0f172a;
+    color: white;
+  }
+</style>
+</head>
+<body>
+  <div class="card" id="preview-light">
+    <h3>Light Mode</h3>
+    <div id="logo-container-light"></div>
+  </div>
+  <div class="card dark" id="preview-dark">
+    <h3>Dark Mode</h3>
+    <div id="logo-container-dark"></div>
+  </div>
+</body>
+</html>

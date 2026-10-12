@@ -1,71 +1,1216 @@
-<div class="min-h-screen flex flex-col text-gray-900">
-  <!-- Navigation Header -->
-  <nav class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-    <div class="w-full px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center space-x-3">
-          <!-- Logo with blue-gradient background -->
-          <div
-            class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-blue-500/20">
-            TVK
-          </div>
-          <div>
-            <h1 class="text-lg font-black tracking-tight text-gray-900 leading-none">Technologies </h1>
-            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Empowering Career Growth</span>
-          </div>
-        </div>
+<div class="min-h-screen flex flex-col text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 font-sans transition-colors duration-200 antialiased selection:bg-indigo-600 selection:text-white">
+  
+  <!-- ========================================================================= -->
+  <!-- 1. SLIM 36PX ANNOUNCEMENT MARQUEE STRIP (Hidden on Admin Routes)           -->
+  <!-- ========================================================================= -->
+  <div *ngIf="!isAdminRoute" class="announcement-strip-container bg-slate-900 text-slate-300 text-xs h-9 flex items-center border-b border-slate-800 relative z-50 overflow-hidden select-none">
+    <div class="w-full flex items-center h-full">
+      
+      <!-- Pinned Live Updates Badge on Left -->
+      <div class="h-full bg-slate-900 z-10 flex items-center pl-4 sm:pl-8 pr-3 border-r border-slate-800/80 shrink-0">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold text-[11px] border border-indigo-400/25 tracking-wide uppercase">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Live Updates
+        </span>
+      </div>
 
-        <!-- Navigation Links -->
+      <!-- Infinite Scrolling Marquee Track with edge fade mask -->
+      <div class="flex-1 overflow-hidden h-full flex items-center marquee-fade-mask relative">
+        <div class="announcement-marquee-track flex items-center gap-8 py-1 cursor-default">
+          
+          <!-- Primary Marquee Track -->
+          <ng-container *ngFor="let item of announcements">
+            <div class="flex items-center gap-2.5 shrink-0">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium shrink-0"
+                    [ngClass]="item.badgeColor">
+                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="item.dotColor"></span>
+                {{ item.badge }}
+              </span>
+              <span class="text-slate-300 text-xs font-normal whitespace-nowrap">
+                {{ item.text }}
+              </span>
+              <a *ngIf="item.actionText" [routerLink]="item.actionLink"
+                 class="text-indigo-400 hover:text-indigo-300 text-[11px] font-medium underline underline-offset-2 shrink-0 transition ml-0.5">
+                {{ item.actionText }} &rarr;
+              </a>
+              <span class="text-slate-700 mx-2 text-xs select-none">•</span>
+            </div>
+          </ng-container>
+
+          <!-- Duplicated Track for Seamless Infinite Loop -->
+          <ng-container *ngFor="let item of announcements">
+            <div class="flex items-center gap-2.5 shrink-0" aria-hidden="true">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium shrink-0"
+                    [ngClass]="item.badgeColor">
+                <span class="w-1.5 h-1.5 rounded-full" [ngClass]="item.dotColor"></span>
+                {{ item.badge }}
+              </span>
+              <span class="text-slate-300 text-xs font-normal whitespace-nowrap">
+                {{ item.text }}
+              </span>
+              <a *ngIf="item.actionText" [routerLink]="item.actionLink"
+                 class="text-indigo-400 hover:text-indigo-300 text-[11px] font-medium underline underline-offset-2 shrink-0 transition ml-0.5">
+                {{ item.actionText }} &rarr;
+              </a>
+              <span class="text-slate-700 mx-2 text-xs select-none">•</span>
+            </div>
+          </ng-container>
+
+        </div>
+      </div>
+
+      <!-- Quick Contact on Right -->
+      <div class="h-full bg-slate-900 z-10 flex items-center pr-4 sm:pr-8 pl-3 border-l border-slate-800/80 shrink-0">
+        <a href="tel:+919876543210" class="hover:text-white transition flex items-center gap-1.5 text-slate-300 text-xs font-medium">
+          <svg class="w-3.5 h-3.5 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+          </svg>
+          <span class="hidden sm:inline font-mono">+91 98765 43210</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. GLASSMORPHIC NAVBAR (Hidden on Admin Routes)                            -->
+  <!-- ========================================================================= -->
+  <nav *ngIf="!isAdminRoute" [class]="'sticky top-0 z-40 transition-all duration-200 border-b motion-header-scrolled ' + 
+               (isScrolled 
+                ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm border-slate-200 dark:border-slate-800 py-2.5' 
+                : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 py-3.5')">
+    <div class="site-container">
+      <div class="flex justify-between items-center h-11">
+        
+        <!-- Brand Logo & Campus Info -->
+        <a routerLink="/home" class="flex items-center space-x-3 group shrink-0 hover:opacity-95 transition-opacity" title="TVK Technologies">
+          <div class="h-10 flex items-center shrink-0">
+            <svg class="tvk-brand-svg h-8 sm:h-9 w-auto" viewBox="0 0 260 105" aria-label="TVK Technologies Logo">
+              <g id="tvk-nav-mark">
+                <!-- 'T' - Bold Slab Serif -->
+                <path class="tvk-brand-navy" d="M 10 28 L 10 42 L 19 42 L 19 36 L 41 36 L 41 85 L 31 85 L 31 92 L 67 92 L 67 85 L 57 85 L 57 36 L 79 36 L 79 42 L 88 42 L 88 28 Z" />
+                <!-- 'V' - Bold Slab Serif -->
+                <path class="tvk-brand-navy" d="M 85 28 L 85 38 L 94 38 L 114 85 L 125 85 L 145 38 L 154 38 L 154 28 L 133 28 L 133 38 L 139 38 L 121 78 L 103 38 L 109 38 L 109 28 Z" />
+                <!-- 'K' - Vertical Stem and Serifs -->
+                <path class="tvk-brand-navy" d="M 152 28 L 152 38 L 161 38 L 161 85 L 152 85 L 152 92 L 186 92 L 186 85 L 177 85 L 177 38 L 186 38 L 186 28 Z" />
+                <!-- 'K' - Lower Diagonal Leg with Foot Serif -->
+                <path class="tvk-brand-navy" d="M 197 61 L 223 85 L 217 85 L 217 92 L 249 92 L 249 85 L 241 85 L 211 55 L 197 61 Z" />
+                <!-- 'K' - Upper Diagonal Arm in Vivid Cyan / Turquoise -->
+                <polygon class="tvk-brand-cyan" points="184,65 195,65 238,27 223,27" />
+                <!-- Cap Base Band (Gold / Amber) -->
+                <rect class="tvk-brand-gold" x="221" y="21" width="18" height="7" rx="0.8" />
+                <!-- Mortarboard Diamond Top -->
+                <polygon class="tvk-brand-cap" points="230,9 254,15 230,20 206,15" />
+                <polygon class="tvk-brand-cap-shadow" points="211,16 230,20.5 249,16 249,17.8 230,22.2 211,17.8" />
+                <!-- Gold Button -->
+                <circle class="tvk-brand-gold" cx="230" cy="15" r="1.8" />
+                <!-- Golden Tassel draping to the right -->
+                <path d="M 230 15 Q 242 13 248 16 L 248 24" fill="none" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" />
+                <circle class="tvk-brand-gold" cx="248" cy="25.5" r="2.2" />
+              </g>
+            </svg>
+          </div>
+          <div class="flex flex-col border-l border-slate-200 dark:border-slate-800 pl-3">
+            <span class="text-base font-bold text-slate-900 dark:text-white leading-tight">Technologies</span>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Training & Placement Institute • Bangalore | Chennai</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
         <div class="hidden md:flex items-center space-x-1 lg:space-x-2">
-          <a routerLink="/home" routerLinkActive="bg-blue-50 text-blue-700 font-bold"
-            class="px-4 py-2 rounded-lg text-sm text-gray-700 hover:text-blue-700 hover:bg-blue-50 transition-all duration-150">
+          <a routerLink="/home" routerLinkActive="text-indigo-600 dark:text-indigo-400 font-semibold active"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="motion-nav-link px-3.5 py-2 rounded-lg text-[15px] font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
             Home
           </a>
-          <a routerLink="/courses" routerLinkActive="bg-blue-50 text-blue-700 font-bold"
-            class="px-4 py-2 rounded-lg text-sm text-gray-700 hover:text-blue-700 hover:bg-blue-50 transition-all duration-150">
-            Courses
+          <a routerLink="/courses" routerLinkActive="text-indigo-600 dark:text-indigo-400 font-semibold active"
+            class="motion-nav-link px-3.5 py-2 rounded-lg text-[15px] font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            Courses & Batches
           </a>
-          <a routerLink="/contact" routerLinkActive="bg-blue-50 text-blue-700 font-bold"
-            class="px-4 py-2 rounded-lg text-sm text-gray-700 hover:text-blue-700 hover:bg-blue-50 transition-all duration-150">
-            Contact
+          <a routerLink="/contact" routerLinkActive="text-indigo-600 dark:text-indigo-400 font-semibold active"
+            class="motion-nav-link px-3.5 py-2 rounded-lg text-[15px] font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            Contact & Support
           </a>
-          <a *ngIf="currentUser" routerLink="/dashboard" routerLinkActive="bg-blue-50 text-blue-700 font-bold"
-            class="px-4 py-2 rounded-lg text-sm text-gray-700 hover:text-blue-700 hover:bg-blue-50 transition-all duration-150">
-            Dashboard
+          <a *ngIf="currentUser" routerLink="/dashboard" routerLinkActive="text-indigo-600 dark:text-indigo-400 font-semibold active"
+            class="motion-nav-link px-3.5 py-2 rounded-lg text-[15px] font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            Portal
           </a>
 
-          <!-- User Section -->
-          <div class="h-6 w-px bg-gray-200 mx-2"></div>
+          <!-- Divider -->
+          <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-2"></div>
 
-          <div *ngIf="currentUser; else notLoggedIn" class="flex items-center space-x-3">
-            <span class="text-xs font-semibold text-gray-500">
-              Logged in as: <strong class="text-gray-900 font-bold">{{ currentUser.name }}</strong>
-            </span>
+          <!-- Dark / Light Mode SVG Button (Lucide Icons) -->
+          <button (click)="toggleDarkMode()"
+            [title]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+            class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition">
+            <!-- Sun Icon for Dark Mode -->
+            <svg *ngIf="isDarkMode" class="w-5 h-5 text-amber-400 motion-dark-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <!-- Moon Icon for Light Mode -->
+            <svg *ngIf="!isDarkMode" class="w-5 h-5 text-slate-700 motion-dark-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+
+          <!-- User State -->
+          <div *ngIf="currentUser; else notLoggedIn" class="flex items-center space-x-3 ml-2 pl-3 border-l border-slate-200 dark:border-slate-800">
+            <div class="text-right">
+              <span class="text-sm font-semibold text-slate-900 dark:text-white block leading-tight">{{ currentUser.name }}</span>
+              <span class="text-xs text-indigo-600 dark:text-indigo-400 font-medium uppercase">{{ currentUser.role }}</span>
+            </div>
             <button (click)="logout()"
-              class="px-4 py-1.5 bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold rounded-lg hover:bg-rose-100 transition-all duration-150">
+              class="h-9 px-3.5 bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900 text-xs font-semibold rounded-[8px] hover:bg-rose-100 transition">
               Logout
             </button>
           </div>
+
           <ng-template #notLoggedIn>
-            <button (click)="openLoginModal()"
-              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow-sm hover:shadow-md transition-all duration-150">
-              Login / Register
-            </button>
+            <div class="flex items-center gap-3 ml-2">
+              <button (click)="openLoginModal()"
+                class="h-10 px-4 rounded-[10px] border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm font-medium transition">
+                Sign In
+              </button>
+              <button (click)="openRegModal()"
+                class="h-10 px-5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-[10px] shadow-sm transition">
+                Register
+              </button>
+            </div>
           </ng-template>
         </div>
+
+        <!-- Mobile Controls -->
+        <div class="flex items-center gap-2 md:hidden">
+          <button (click)="toggleDarkMode()" class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <svg *ngIf="isDarkMode" class="w-5 h-5 text-amber-400 motion-dark-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg *ngIf="!isDarkMode" class="w-5 h-5 text-slate-700 motion-dark-toggle-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+          <button (click)="mobileMenuOpen = !mobileMenuOpen"
+            class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path *ngIf="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+              <path *ngIf="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
       </div>
+
+      <!-- Mobile Menu Drawer -->
+      <div *ngIf="mobileMenuOpen" class="md:hidden pt-4 pb-3 border-t border-slate-200 dark:border-slate-800 mt-3 space-y-2 animate-fade-in">
+        <a routerLink="/home" (click)="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Home</a>
+        <a routerLink="/courses" (click)="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Courses & Batches</a>
+        <a routerLink="/contact" (click)="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Contact & Support</a>
+        <a *ngIf="currentUser" routerLink="/dashboard" (click)="mobileMenuOpen = false" class="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Portal ({{ currentUser.role }})</a>
+
+        <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2">
+          <button *ngIf="!currentUser" (click)="openLoginModal(); mobileMenuOpen = false" class="w-full h-11 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium rounded-[10px] text-sm">
+            Sign In
+          </button>
+          <button *ngIf="!currentUser" (click)="openRegModal(); mobileMenuOpen = false" class="w-full h-11 bg-indigo-600 text-white font-medium rounded-[10px] text-sm">
+            Register
+          </button>
+          <button *ngIf="currentUser" (click)="logout(); mobileMenuOpen = false" class="w-full h-11 bg-rose-50 text-rose-600 font-medium rounded-[10px] text-sm">
+            Logout
+          </button>
+        </div>
+      </div>
+
     </div>
   </nav>
 
-  <!-- Main Content Route Outlet -->
-  <main class="flex-grow w-full px-4 sm:px-6 lg:px-8 py-6">
+  <!-- ========================================================================= -->
+  <!-- MAIN ROUTED CONTENT                                                       -->
+  <!-- ========================================================================= -->
+  <main class="flex-grow w-full motion-route-container">
     <router-outlet></router-outlet>
   </main>
 
-  <!-- Toast Notification Overlay -->
-  <div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full">
+  <!-- ========================================================================= -->
+  <!-- 3. RICH FOOTER (Hidden on Admin Routes)                                   -->
+  <!-- ========================================================================= -->
+  <footer *ngIf="!isAdminRoute" class="bg-[#0B1224] text-[#CBD5E1] border-t border-slate-800 pt-20 pb-12 text-[15px] mt-auto">
+    <div class="site-container">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        
+        <!-- Col 1: Brand (2 cols on LG) -->
+        <div motionReveal="fade-up" class="lg:col-span-2 space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="h-10 flex items-center shrink-0">
+              <svg class="h-9 w-auto overflow-visible" viewBox="0 0 260 105" aria-label="TVK Technologies Logo">
+                <g id="tvk-footer-mark">
+                  <!-- 'T' - White Slab Serif for dark footer -->
+                  <path fill="#FFFFFF" d="M 10 28 L 10 42 L 19 42 L 19 36 L 41 36 L 41 85 L 31 85 L 31 92 L 67 92 L 67 85 L 57 85 L 57 36 L 79 36 L 79 42 L 88 42 L 88 28 Z" />
+                  <!-- 'V' - White Slab Serif -->
+                  <path fill="#FFFFFF" d="M 85 28 L 85 38 L 94 38 L 114 85 L 125 85 L 145 38 L 154 38 L 154 28 L 133 28 L 133 38 L 139 38 L 121 78 L 103 38 L 109 38 L 109 28 Z" />
+                  <!-- 'K' - White Vertical Stem and Serifs -->
+                  <path fill="#FFFFFF" d="M 152 28 L 152 38 L 161 38 L 161 85 L 152 85 L 152 92 L 186 92 L 186 85 L 177 85 L 177 38 L 186 38 L 186 28 Z" />
+                  <!-- 'K' - Lower Diagonal Leg with Foot Serif -->
+                  <path fill="#FFFFFF" d="M 197 61 L 223 85 L 217 85 L 217 92 L 249 92 L 249 85 L 241 85 L 211 55 L 197 61 Z" />
+                  <!-- 'K' - Upper Diagonal Arm in Vivid Cyan / Turquoise -->
+                  <polygon points="184,65 195,65 238,27 223,27" fill="#00A8CC" />
+                  <!-- Cap Base Band (Gold / Amber) -->
+                  <rect x="221" y="21" width="18" height="7" rx="0.8" fill="#F59E0B" />
+                  <!-- Mortarboard Diamond Top -->
+                  <polygon points="230,9 254,15 230,20 206,15" fill="#E2E8F0" />
+                  <polygon points="211,16 230,20.5 249,16 249,17.8 230,22.2 211,17.8" fill="#94A3B8" />
+                  <!-- Gold Button -->
+                  <circle cx="230" cy="15" r="1.8" fill="#F59E0B" />
+                  <!-- Golden Tassel draping to the right -->
+                  <path d="M 230 15 Q 242 13 248 16 L 248 24" fill="none" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" />
+                  <circle cx="248" cy="25.5" r="2.2" fill="#F59E0B" />
+                </g>
+              </svg>
+            </div>
+            <div class="border-l border-slate-700/80 pl-3">
+              <h4 class="text-lg font-bold text-white leading-tight">Technologies</h4>
+              <span class="text-xs text-indigo-400 font-medium uppercase tracking-wider block">Training & Placement Institute</span>
+            </div>
+          </div>
+
+          <p class="text-[15px] text-[#CBD5E1] leading-relaxed max-w-sm font-normal">
+            Bangalore & Chennai’s leading corporate-aligned IT training and guaranteed placement hub. Transforming engineering graduates into high-impact software developers.
+          </p>
+
+          <div class="pt-2 text-xs font-semibold text-slate-300">
+            <span>🏆 100% Placement Record • 160+ Hiring Partners • 4.9/5 Rating</span>
+          </div>
+        </div>
+
+        <!-- Col 2: Flagship Courses -->
+        <div motionReveal="fade-up" class="motion-stagger-1 space-y-3">
+          <h5 class="text-base font-semibold text-white uppercase tracking-wider">Programs</h5>
+          <ul class="space-y-2.5 text-[15px]">
+            <li><a routerLink="/courses" class="hover:text-white transition">Full Stack Java with Angular</a></li>
+            <li><a routerLink="/courses" class="hover:text-white transition">Java Full Stack with React</a></li>
+            <li><a routerLink="/courses" class="hover:text-white transition">Angular Specialist Masterclass</a></li>
+            <li><a routerLink="/courses" class="hover:text-white transition">Spring Boot & Microservices</a></li>
+            <li><a routerLink="/courses" class="hover:text-white transition">Cloud & DevOps Lab</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Campuses -->
+        <div motionReveal="fade-up" class="motion-stagger-2 space-y-3">
+          <h5 class="text-base font-semibold text-white uppercase tracking-wider">Campus Hubs</h5>
+          <div class="space-y-3 text-[15px]">
+            <div class="border-l-2 border-indigo-500 pl-3">
+              <strong class="text-white block font-medium">Bangalore Hub</strong>
+              <p class="text-slate-400 text-xs mt-0.5">BTM Layout 2nd Stage, Outer Ring Road, Bangalore - 560076</p>
+              <a href="tel:+919876543210" class="text-indigo-400 text-xs font-semibold hover:underline block mt-0.5">+91 98765 43210</a>
+            </div>
+            <div class="border-l-2 border-indigo-500 pl-3">
+              <strong class="text-white block font-medium">Chennai Hub</strong>
+              <p class="text-slate-400 text-xs mt-0.5">OMR IT Expressway, Sholinganallur, Chennai - 600119</p>
+              <a href="tel:+919876543211" class="text-indigo-400 text-xs font-semibold hover:underline block mt-0.5">+91 98765 43211</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 4: Newsletter -->
+        <div motionReveal="fade-up" class="motion-stagger-3 space-y-3">
+          <h5 class="text-base font-semibold text-white uppercase tracking-wider">Stay Updated</h5>
+          <p class="text-[15px] text-[#CBD5E1]">
+            Subscribe for free weekly interview cheatsheets, tech salary trends, and batch schedules.
+          </p>
+          <form (ngSubmit)="subscribeNewsletter()" class="space-y-2">
+            <input type="email" [(ngModel)]="newsletterEmail" name="newsletterEmail" required
+              placeholder="Enter your email"
+              class="w-full h-12 px-4 rounded-[10px] bg-slate-900 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-medium" />
+            <button type="submit" [disabled]="isSubscribingNewsletter"
+              class="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-[10px] text-sm transition">
+              {{ isSubscribingNewsletter ? 'Subscribing...' : 'Get Weekly Tech Insights' }}
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        <p>&copy; 2026 TVK Technologies Pvt Ltd. All rights reserved.</p>
+        <div class="flex items-center gap-6">
+          <a routerLink="/courses" class="hover:text-white transition">Curriculum</a>
+          <a routerLink="/contact" class="hover:text-white transition">Campus Locations</a>
+          <button (click)="openLoginModal()" class="hover:text-white transition">Sign In</button>
+          <button (click)="openRegModal()" class="hover:text-white transition text-indigo-400 font-semibold">Book Demo</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- 4. CLEAN SPLIT-SCREEN LOGIN MODAL (No Demo Tiles in Public View)          -->
+  <!-- ========================================================================= -->
+  <div *ngIf="showLoginModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4 motion-modal-backdrop">
+    <div role="dialog" aria-modal="true" aria-label="Portal Sign In"
+      data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true"
+      class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col md:flex-row my-auto motion-modal-dialog">
+      
+      <!-- Left Panel: Benefits Summary -->
+      <div class="md:w-5/12 bg-slate-50 dark:bg-slate-800/60 p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800">
+        <div class="space-y-4">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-semibold text-white text-sm">
+              TVK
+            </div>
+            <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Learner Portal</span>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Track Your Progress & Placement Calls</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+              Log in to view your live attendance, capstone repository grades, and mock interview schedules.
+            </p>
+          </div>
+
+          <div class="space-y-2 pt-2 text-xs text-slate-700 dark:text-slate-300">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Batch curriculum & project files</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>1-on-1 trainer feedback notes</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Automated certificate verification</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden dev flag for test logins -->
+        <div class="pt-4 border-t border-slate-200 dark:border-slate-700 text-center">
+          <p class="text-[11px] text-slate-400">TVK Technologies Secure Portal</p>
+        </div>
+      </div>
+
+      <!-- Right Form Column -->
+      <div class="md:w-7/12 p-6 sm:p-8 space-y-5 bg-white dark:bg-slate-900">
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-xl font-semibold text-slate-900 dark:text-white">Portal Sign In</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Enter your registered email and password</p>
+          </div>
+          <button (click)="closeLoginModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-2xl font-bold">&times;</button>
+        </div>
+
+        <form (ngSubmit)="submitLogin()" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
+            <input type="email" [(ngModel)]="loginEmail" name="loginEmail" required
+              placeholder="e.g. rahul.sharma@gmail.com"
+              class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-normal" />
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center">
+              <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Password / Temp Key</label>
+              <button type="button" (click)="forgotPassword()" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+                Forgot password?
+              </button>
+            </div>
+            <div class="relative">
+              <input [type]="showLoginPassword ? 'text' : 'password'" [(ngModel)]="loginPassword" name="loginPassword" required
+                placeholder="Enter password or temporary access key"
+                class="w-full h-12 pl-4 pr-12 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-base focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-normal" />
+              <button type="button" (click)="showLoginPassword = !showLoginPassword"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                {{ showLoginPassword ? 'HIDE' : 'SHOW' }}
+              </button>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 pt-0.5">
+              💡 First time? Use the temporary password sent to you after approval.
+            </p>
+          </div>
+
+          <!-- Error Alert -->
+          <div *ngIf="loginErrorMessage" class="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300 text-xs font-medium rounded-[8px]">
+            ⚠️ {{ loginErrorMessage }}
+          </div>
+
+          <button type="submit" [disabled]="isLoggingIn"
+            class="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-base rounded-[10px] shadow-sm transition disabled:opacity-75">
+            {{ isLoggingIn ? 'Signing In...' : 'Sign in to Portal' }}
+          </button>
+        </form>
+
+        <div class="text-center pt-2 border-t border-slate-100 dark:border-slate-800">
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            New applicant?
+            <button (click)="openRegModal()" class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline ml-1">
+              Submit student application &rarr;
+            </button>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 5. STUDENT REGISTRATION (LARGE COMPREHENSIVE FORM - APPROVAL-BASED)        -->
+  <!-- ========================================================================= -->
+  <div *ngIf="showRegModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-3 sm:p-6 motion-modal-backdrop">
+    <div role="dialog" aria-modal="true" aria-label="Student Registration & Profile"
+      data-lenis-prevent="true"
+      class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-4xl w-full flex flex-col max-h-[90vh] my-auto motion-modal-dialog overflow-hidden">
+      
+      <!-- Modal Header (Fixed at top) -->
+      <div class="flex justify-between items-start border-b border-slate-100 dark:border-slate-800 p-6 sm:px-9 sm:py-6 shrink-0 bg-white dark:bg-slate-900">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">
+            <span>🎓 Student Application</span>
+            <span>•</span>
+            <span class="text-indigo-500">Admissions Review</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Student Registration & Profile</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Fill in your candidate details, address, and track preference. Login access will be enabled upon admissions review approval.
+          </p>
+        </div>
+        <button (click)="closeRegModal()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white flex items-center justify-center text-xl transition shrink-0 ml-4">
+          &times;
+        </button>
+      </div>
+
+      <form (ngSubmit)="submitRegister()" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+        
+        <!-- Scrollable Form Body -->
+        <div class="flex-1 overflow-y-auto p-6 sm:p-9 space-y-7 modal-form-scrollable" data-lenis-prevent="true">
+        
+        <!-- SECTION 1: PERSONAL & CONTACT INFORMATION -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 border-l-4 border-indigo-600 pl-2.5">
+            <span>1. Personal & Contact Details</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4 items-start">
+            <!-- First Name -->
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  First Name <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <input type="text" [(ngModel)]="regFirstName" name="regFirstName" (input)="markTouched('firstName')" (blur)="markTouched('firstName')" required placeholder="e.g. Rahul"
+                [class]="'w-full h-12 px-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getFirstNameError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              <p *ngIf="getFirstNameError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getFirstNameError() }}
+              </p>
+            </div>
+
+            <!-- Last Name -->
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Last Name <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <input type="text" [(ngModel)]="regLastName" name="regLastName" (input)="markTouched('lastName')" (blur)="markTouched('lastName')" required placeholder="e.g. Sharma"
+                [class]="'w-full h-12 px-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getLastNameError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              <p *ngIf="getLastNameError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getLastNameError() }}
+              </p>
+            </div>
+
+            <!-- Email Address -->
+            <div class="sm:col-span-2 flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Email Address <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <input type="email" [(ngModel)]="regEmail" name="regEmail"
+                (input)="markTouched('email')" (blur)="markTouched('email')"
+                required placeholder="e.g. rahul.sharma@example.com"
+                [class]="'w-full h-12 px-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getEmailError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              <p *ngIf="getEmailError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1 animate-fade-in">
+                <span>⚠️</span> {{ getEmailError() }}
+              </p>
+            </div>
+
+            <!-- Personal Phone with Country Code -->
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Personal Contact Number <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <div class="flex gap-0 relative">
+                <!-- Country Code Selector -->
+                <button type="button" (click)="toggleCountryDropdown('personal')"
+                  class="flex items-center gap-1 h-12 px-3 rounded-l-xl border border-r-0 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition whitespace-nowrap min-w-[90px]">
+                  <span class="text-base">{{ getCountryFlag(selectedCountryCode) }}</span>
+                  <span>{{ selectedCountryCode }}</span>
+                  <span class="text-[10px] ml-0.5 text-slate-400">▼</span>
+                </button>
+                <!-- Country Code Dropdown -->
+                <div *ngIf="showCountryDropdown" class="absolute top-[52px] left-0 z-50 w-64 max-h-60 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl">
+                  <div class="sticky top-0 bg-white dark:bg-slate-800 p-2 border-b border-slate-100 dark:border-slate-700">
+                    <input type="text" [(ngModel)]="countrySearchTerm" name="countrySearch" placeholder="Search country..."
+                      class="w-full h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-xs outline-none focus:ring-1 focus:ring-indigo-500" />
+                  </div>
+                  <button *ngFor="let cc of filteredCountryCodes" type="button"
+                    (click)="selectCountryCode(cc.code, 'personal')"
+                    class="flex items-center gap-2 w-full px-3 py-2 text-left text-sm hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition"
+                    [class.bg-indigo-50]="selectedCountryCode === cc.code">
+                    <span class="text-base">{{ cc.flag }}</span>
+                    <span class="text-slate-700 dark:text-slate-200">{{ cc.label }}</span>
+                  </button>
+                </div>
+                <input type="tel" [(ngModel)]="regPersonalPhone" name="regPersonalPhone"
+                  (input)="markTouched('personalPhone')" (blur)="markTouched('personalPhone'); showCountryDropdown=false" required
+                  placeholder="98765 43210"
+                  [class]="'flex-1 h-12 px-4 rounded-r-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getPhoneError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              </div>
+              <p *ngIf="getPhoneError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getPhoneError() }}
+              </p>
+            </div>
+
+            <!-- Emergency Phone with Country Code -->
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Emergency Contact <span class="text-slate-400 font-normal normal-case">(Parent / Guardian)</span>
+                </label>
+              </div>
+              <div class="flex gap-0 relative">
+                <button type="button" (click)="toggleCountryDropdown('emergency')"
+                  class="flex items-center gap-1 h-12 px-3 rounded-l-xl border border-r-0 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition whitespace-nowrap min-w-[90px]">
+                  <span class="text-base">{{ getCountryFlag(emergencyCountryCode) }}</span>
+                  <span>{{ emergencyCountryCode }}</span>
+                  <span class="text-[10px] ml-0.5 text-slate-400">▼</span>
+                </button>
+                <div *ngIf="showEmergencyCountryDropdown" class="absolute top-[52px] left-0 z-50 w-64 max-h-60 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl">
+                  <div class="sticky top-0 bg-white dark:bg-slate-800 p-2 border-b border-slate-100 dark:border-slate-700">
+                    <input type="text" [(ngModel)]="countrySearchTerm" name="emergencyCountrySearch" placeholder="Search country..."
+                      class="w-full h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-xs outline-none focus:ring-1 focus:ring-indigo-500" />
+                  </div>
+                  <button *ngFor="let cc of filteredCountryCodes" type="button"
+                    (click)="selectCountryCode(cc.code, 'emergency')"
+                    class="flex items-center gap-2 w-full px-3 py-2 text-left text-sm hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition"
+                    [class.bg-indigo-50]="emergencyCountryCode === cc.code">
+                    <span class="text-base">{{ cc.flag }}</span>
+                    <span class="text-slate-700 dark:text-slate-200">{{ cc.label }}</span>
+                  </button>
+                </div>
+                <input type="tel" [(ngModel)]="regEmergencyPhone" name="regEmergencyPhone"
+                  placeholder="91234 56789"
+                  class="flex-1 h-12 px-4 rounded-r-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800 outline-none transition" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 2: STRUCTURED RESIDENTIAL ADDRESS -->
+        <div class="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 border-l-4 border-indigo-600 pl-2.5">
+            <span>2. Address Details</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-6 gap-x-4 gap-y-4 items-start">
+            <!-- D.No / Flat / House No -->
+            <div class="sm:col-span-2 flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  D.No / Flat No <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <input type="text" [(ngModel)]="regDoorNo" name="regDoorNo" (input)="markTouched('doorNo')" (blur)="markTouched('doorNo')" placeholder="e.g. #42/A, Flat 302"
+                [class]="'w-full h-12 px-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getDoorNoError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              <p *ngIf="getDoorNoError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getDoorNoError() }}
+              </p>
+            </div>
+
+            <!-- Street Name -->
+            <div class="sm:col-span-4 flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Street / Landmark <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <input type="text" [(ngModel)]="regStreet" name="regStreet" (input)="markTouched('street')" (blur)="markTouched('street')" placeholder="e.g. 7th Main Road, Outer Ring Road"
+                [class]="'w-full h-12 px-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getStreetError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              <p *ngIf="getStreetError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getStreetError() }}
+              </p>
+            </div>
+
+            <!-- City -->
+            <div class="sm:col-span-2 flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  City <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <input type="text" [(ngModel)]="regCity" name="regCity" (input)="markTouched('city')" (blur)="markTouched('city')" placeholder="e.g. Bangalore"
+                [class]="'w-full h-12 px-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getCityError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              <p *ngIf="getCityError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getCityError() }}
+              </p>
+            </div>
+
+            <!-- State -->
+            <div class="sm:col-span-2 flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  State <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <input type="text" [(ngModel)]="regState" name="regState" (input)="markTouched('state')" (blur)="markTouched('state')" placeholder="e.g. Karnataka"
+                [class]="'w-full h-12 px-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getStateError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              <p *ngIf="getStateError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getStateError() }}
+              </p>
+            </div>
+
+            <!-- Pincode -->
+            <div class="sm:col-span-2 flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Pincode <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <input type="text" [(ngModel)]="regPincode" name="regPincode" (input)="markTouched('pincode')" (blur)="markTouched('pincode')" maxlength="6" placeholder="e.g. 560076"
+                [class]="'w-full h-12 px-4 rounded-xl border bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none transition ' + (getPincodeError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800')" />
+              <p *ngIf="getPincodeError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getPincodeError() }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: PREFERRED LOCATION (BANGALORE OR CHENNAI) -->
+        <div class="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 border-l-4 border-indigo-600 pl-2.5">
+              <span>3. Preferred Location for Training & Job</span>
+            </div>
+            <span class="text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-0.5 rounded-full">
+              Bangalore or Chennai
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <!-- Bangalore Selection Card -->
+            <div (click)="regPreferredLocation = 'Bangalore'; regCampus = 'Bangalore'"
+              [class]="'cursor-pointer p-4 rounded-2xl border-2 transition-all flex items-center gap-4 ' + (regPreferredLocation === 'Bangalore' ? 'border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/40 shadow-sm ring-2 ring-indigo-500/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600')">
+              <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xl shrink-0">
+                BLR
+              </div>
+              <div class="flex-grow">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-bold text-slate-900 dark:text-white text-base">Bangalore Hub</h4>
+                  <span *ngIf="regPreferredLocation === 'Bangalore'" class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">✓</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Outer Ring Road, BTM Layout 2nd Stage</p>
+                <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 mt-1 inline-block">100+ Hiring Partners</span>
+              </div>
+            </div>
+
+            <!-- Chennai Selection Card -->
+            <div (click)="regPreferredLocation = 'Chennai'; regCampus = 'Chennai'"
+              [class]="'cursor-pointer p-4 rounded-2xl border-2 transition-all flex items-center gap-4 ' + (regPreferredLocation === 'Chennai' ? 'border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/40 shadow-sm ring-2 ring-indigo-500/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600')">
+              <div class="w-12 h-12 rounded-xl bg-violet-600 text-white flex items-center justify-center font-bold text-xl shrink-0">
+                CHN
+              </div>
+              <div class="flex-grow">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-bold text-slate-900 dark:text-white text-base">Chennai Hub</h4>
+                  <span *ngIf="regPreferredLocation === 'Chennai'" class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">✓</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">OMR IT Corridor, Sholinganallur</p>
+                <span class="text-[11px] font-semibold text-violet-600 dark:text-violet-400 mt-1 inline-block">60+ Hiring Partners</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: PROGRAM TRACK (INTERNSHIP OR JOB PLACEMENT) -->
+        <div class="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 border-l-4 border-indigo-600 pl-2.5">
+              <span>4. Application Track & Skills</span>
+            </div>
+          </div>
+
+          <!-- Track Switcher Pills -->
+          <div class="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl">
+            <button type="button" (click)="regTrackType = 'internship'"
+              [class]="'h-12 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ' + (regTrackType === 'internship' ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-slate-700' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900')">
+              <span>🎯 Internship Program</span>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-semibold">Live Projects</span>
+            </button>
+            <button type="button" (click)="regTrackType = 'job'"
+              [class]="'h-12 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ' + (regTrackType === 'job' ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-slate-700' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900')">
+              <span>💼 Job Placement Track</span>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold">100% Guaranteed</span>
+            </button>
+          </div>
+
+          <!-- SUB-FORM A: INTERNSHIP TRACK -->
+          <div *ngIf="regTrackType === 'internship'" class="p-5 rounded-2xl bg-indigo-50/40 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/50 space-y-4 animate-fade-in">
+            <div class="flex items-center gap-2 text-indigo-900 dark:text-indigo-300 font-bold text-xs uppercase tracking-wider">
+              <span>Internship Details: Skills, Joining Availability & Course Track</span>
+            </div>
+
+            <!-- Which course they want -->
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Which Course Do You Want for Internship? <span class="text-rose-500">*</span>
+                </label>
+              </div>
+              <select [(ngModel)]="regCourse" name="regCourse"
+                class="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-semibold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                <option value="Java Full Stack with Angular">Java Full Stack with Angular (Comprehensive Enterprise SPA)</option>
+                <option value="Java Full Stack with React">Java Full Stack with React (Enterprise Microservices & UI)</option>
+                <option value="Enterprise Java & Spring Boot Microservices">Enterprise Java & Spring Boot Microservices</option>
+                <option value="Angular 18 Specialist & Reactive Architecture">Angular 18 Specialist & Reactive Architecture</option>
+                <option value="Cloud DevOps, Docker & Kubernetes for Java Developers">Cloud DevOps, Docker & Kubernetes for Java Developers</option>
+                <option value="AI & Data Science Specialist">AI & Data Science Specialist</option>
+              </select>
+            </div>
+
+            <!-- Availability of Joining -->
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Availability of Joining <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-[11px] text-slate-500 dark:text-slate-400">Earliest joining date</span>
+              </div>
+              <input type="date" [(ngModel)]="regAvailabilityDate" name="regAvailabilityDate" [min]="minAvailabilityDate"
+                class="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none" />
+            </div>
+
+            <!-- Skills Tag Picker with Live Autocomplete Suggestions -->
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Skills / Technologies You Know <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-slate-400 font-normal text-[11px]">(Type to search)</span>
+              </div>
+              
+              <!-- Input Wrapper with Relative Positioning for Dropdown -->
+              <div class="relative">
+                <div [class]="'flex flex-wrap gap-2 min-h-[48px] p-2 rounded-xl bg-white dark:bg-slate-800 border transition ' + (getSkillsError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-indigo-500')">
+                  <span *ngFor="let skill of selectedSkills"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 text-xs font-semibold animate-fade-in">
+                    <span>{{ skill }}</span>
+                    <button type="button" (click)="removeSkill(skill)" class="hover:text-rose-500 text-sm font-bold leading-none">&times;</button>
+                  </span>
+                  <input type="text" [(ngModel)]="skillInput" name="skillInput" (keydown)="onSkillInputKeyDown($event)"
+                    (input)="onSkillInputChange()" (focus)="onSkillInputFocus()" (blur)="onSkillInputBlur()"
+                    placeholder="Type a skill (e.g. Microservices, Kafka, Java)..."
+                    class="flex-grow min-w-[180px] bg-transparent text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 outline-none px-2 py-1" />
+                </div>
+
+                <!-- Live Autocomplete Suggestion Dropdown -->
+                <div *ngIf="showSkillSuggestions && filteredSkillSuggestions.length > 0 && skillInput.trim()"
+                  class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-800 border-2 border-indigo-500 dark:border-indigo-400 rounded-2xl shadow-2xl z-50 overflow-hidden py-1.5 max-h-52 overflow-y-auto animate-fade-in">
+                  <div class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                    Suggested Skills (Click to Add):
+                  </div>
+                  <button type="button" *ngFor="let suggestion of filteredSkillSuggestions"
+                    (mousedown)="addSkill(suggestion); $event.preventDefault()"
+                    class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/80 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center justify-between transition cursor-pointer">
+                    <span class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                      <span>{{ suggestion }}</span>
+                    </span>
+                    <span class="text-[11px] px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-bold">+ Add Skill</span>
+                  </button>
+                </div>
+              </div>
+
+              <p *ngIf="getSkillsError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getSkillsError() }}
+              </p>
+
+              <!-- Quick Skill Recommendations -->
+              <div class="flex flex-wrap items-center gap-1.5 pt-1.5">
+                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Quick Add:</span>
+                <button type="button" *ngFor="let qs of ['Java', 'Spring Boot', 'Microservices', 'Angular 18', 'TypeScript', 'SQL', 'Docker', 'Kafka']"
+                  (click)="addSkill(qs)"
+                  class="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-slate-700 dark:text-slate-300 hover:text-indigo-600 transition border border-slate-200 dark:border-slate-700">
+                  + {{ qs }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-FORM B: JOB PLACEMENT TRACK -->
+          <div *ngIf="regTrackType === 'job'" class="p-5 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/50 space-y-4 animate-fade-in">
+            <div class="flex items-center gap-2 text-emerald-900 dark:text-emerald-300 font-bold text-xs uppercase tracking-wider">
+              <span>Job Placement Details: Technical Skills & Resume</span>
+            </div>
+
+            <!-- Skills Tag Picker for Job with Live Autocomplete Suggestions -->
+            <div class="flex flex-col">
+              <div class="flex items-center justify-between min-h-[22px] mb-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  Technical Skills & Core Competencies <span class="text-rose-500">*</span>
+                </label>
+                <span class="text-slate-400 font-normal text-[11px]">(Type to search)</span>
+              </div>
+
+              <!-- Input Wrapper with Relative Positioning for Dropdown -->
+              <div class="relative">
+                <div [class]="'flex flex-wrap gap-2 min-h-[48px] p-2 rounded-xl bg-white dark:bg-slate-800 border transition ' + (getSkillsError() ? 'border-rose-500 ring-1 ring-rose-500/30' : 'border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-emerald-500')">
+                  <span *ngFor="let skill of selectedSkills"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 text-xs font-semibold animate-fade-in">
+                    <span>{{ skill }}</span>
+                    <button type="button" (click)="removeSkill(skill)" class="hover:text-rose-500 text-sm font-bold leading-none">&times;</button>
+                  </span>
+                  <input type="text" [(ngModel)]="skillInput" name="skillInputJob" (keydown)="onSkillInputKeyDown($event)"
+                    (input)="onSkillInputChange()" (focus)="onSkillInputFocus()" (blur)="onSkillInputBlur()"
+                    placeholder="Type a skill (e.g. Microservices, Spring Boot, React, AWS)..."
+                    class="flex-grow min-w-[180px] bg-transparent text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 outline-none px-2 py-1" />
+                </div>
+
+                <!-- Live Autocomplete Suggestion Dropdown -->
+                <div *ngIf="showSkillSuggestions && filteredSkillSuggestions.length > 0 && skillInput.trim()"
+                  class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-800 border-2 border-emerald-500 dark:border-emerald-400 rounded-2xl shadow-2xl z-50 overflow-hidden py-1.5 max-h-52 overflow-y-auto animate-fade-in">
+                  <div class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                    Suggested Skills (Click to Add):
+                  </div>
+                  <button type="button" *ngFor="let suggestion of filteredSkillSuggestions"
+                    (mousedown)="addSkill(suggestion); $event.preventDefault()"
+                    class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-800 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-950/80 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center justify-between transition cursor-pointer">
+                    <span class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span>{{ suggestion }}</span>
+                    </span>
+                    <span class="text-[11px] px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-bold">+ Add Skill</span>
+                  </button>
+                </div>
+              </div>
+
+              <p *ngIf="getSkillsError()" class="text-[11px] text-rose-500 font-semibold flex items-center gap-1 mt-1">
+                <span>⚠️</span> {{ getSkillsError() }}
+              </p>
+
+              <!-- Quick Skill Recommendations for Job Track -->
+              <div class="flex flex-wrap items-center gap-1.5 pt-1">
+                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Popular:</span>
+                <button type="button" *ngFor="let qs of ['Java', 'Spring Boot', 'Microservices', 'Angular 18', 'React.js', 'REST APIs', 'SQL', 'Docker', 'AWS', 'Kafka']"
+                  (click)="addSkill(qs)"
+                  class="text-[11px] font-medium px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-100 dark:hover:bg-emerald-950 text-slate-700 dark:text-slate-300 hover:text-emerald-600 transition border border-slate-200 dark:border-slate-700">
+                  + {{ qs }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Resume Upload Field -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                Attach Resume / CV <span class="text-slate-400 font-normal normal-case">(PDF / DOCX - Max 5MB)</span>
+              </label>
+              
+              <div class="flex items-center gap-3">
+                <label class="cursor-pointer h-12 px-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-2 transition shadow-xs">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  <span>Choose Resume File</span>
+                  <input type="file" (change)="onResumeFileSelected($event)" accept=".pdf,.doc,.docx" class="hidden" />
+                </label>
+                
+                <div *ngIf="regResumeFileName" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold">
+                  <span>📄 {{ regResumeFileName }}</span>
+                  <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-normal">({{ regResumeFileSize || '1.2 MB' }})</span>
+                </div>
+                <span *ngIf="!regResumeFileName" class="text-xs text-slate-400 italic">No file chosen yet</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 5: SECURITY POLICY & TERMS AGREEMENT -->
+        <div class="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 space-y-3">
+          <div class="flex items-start gap-2.5">
+            <span class="text-lg">🛡️</span>
+            <div>
+              <h5 class="text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-wider">Approval-Based Security Notice</h5>
+              <p class="text-xs text-amber-800 dark:text-amber-400 mt-0.5 leading-relaxed">
+                No password is created during registration. Once your application is reviewed and approved by the admissions team, a temporary login password will be dispatched to your registered email/phone.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2.5 pt-2 border-t border-amber-200/60 dark:border-amber-900/40">
+            <input type="checkbox" id="regTermsLarge" [(ngModel)]="regAgreeTerms" name="regAgreeTermsLarge" required
+              class="mt-1 w-4 h-4 rounded border-amber-400 text-indigo-600 focus:ring-indigo-500 cursor-pointer" />
+            <label for="regTermsLarge" class="text-xs text-slate-700 dark:text-slate-300 cursor-pointer select-none leading-relaxed font-medium">
+              I confirm that all details provided are accurate and agree to TVK Technologies <span class="text-indigo-600 dark:text-indigo-400 font-bold">Terms of Service</span> and <span class="text-indigo-600 dark:text-indigo-400 font-bold">100% Placement Policy</span>.
+            </label>
+          </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div *ngIf="regErrorMessage" class="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300 text-xs font-semibold rounded-xl flex items-center gap-2">
+          <span>⚠️</span>
+          <span>{{ regErrorMessage }}</span>
+        </div>
+
+      </div><!-- End Scrollable Form Body -->
+
+      <!-- Fixed Modal Footer with Submit & Cancel Buttons -->
+      <div class="shrink-0 px-6 sm:px-9 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-800/80 backdrop-blur-xs">
+        <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">
+          All fields marked with <span class="text-rose-500 font-bold">*</span> are required
+        </p>
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <button type="button" (click)="closeRegModal()" class="w-full sm:w-auto h-12 px-6 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold rounded-xl text-sm transition">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="isRegistering"
+            class="w-full sm:w-auto h-12 px-8 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm shadow-md transition disabled:opacity-75 flex items-center justify-center gap-2">
+            <span>{{ isRegistering ? 'Submitting Application...' : 'Submit Student Application' }}</span>
+            <span *ngIf="!isRegistering">&rarr;</span>
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+  <!-- ========================================================================= -->
+  <!-- 6. REGISTRATION SUCCESS CONFIRMATION MODAL                                -->
+  <!-- ========================================================================= -->
+  <div *ngIf="showSuccessApplicationModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4 motion-modal-backdrop">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full p-6 sm:p-8 space-y-6 text-center my-auto motion-modal-dialog">
+      <div class="w-14 h-14 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+        <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Application Received</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+          Application received. Your login will be enabled once our admissions team approves your application. You will be notified by email/SMS.
+        </p>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Candidate: <strong class="text-slate-800 dark:text-slate-200">{{ submittedStudentInfo?.name }}</strong> (<span class="text-indigo-600 dark:text-indigo-400">{{ submittedStudentInfo?.email }}</span>)
+        </p>
+      </div>
+
+      <button (click)="goToPortalFromSuccess()"
+        class="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-[10px] text-base shadow transition">
+        Return to Home &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 7. MANDATORY FIRST-TIME PASSWORD SETUP MODAL                              -->
+  <!-- ========================================================================= -->
+  <div *ngIf="showChangePasswordModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4 motion-modal-backdrop">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-md w-full p-6 sm:p-8 space-y-5 my-auto motion-modal-dialog">
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 rounded-full flex items-center justify-center mx-auto text-xl mb-2">
+          🔒
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Set Your New Password</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">First-time sign in: Please set a secure permanent password to unlock portal access.</p>
+      </div>
+
+      <form (ngSubmit)="submitChangePassword()" class="space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Account Email</label>
+          <input type="email" [value]="changePassEmail" disabled
+            class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500 text-sm outline-none font-medium" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">New Password <span class="text-rose-500">*</span></label>
+          <input type="password" [(ngModel)]="changePassNew" name="changePassNew" required placeholder="Min. 6 characters (e.g. MySecPass@9)"
+            class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+
+          <!-- Password Strength Meter -->
+          <div *ngIf="changePassNew" class="space-y-1 pt-1">
+            <div class="flex justify-between text-xs font-medium">
+              <span class="text-slate-400">Password Strength:</span>
+              <span [class]="changePassNew.length >= 6 ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-rose-500 font-semibold'">
+                {{ getPasswordStrength(changePassNew).label }}
+              </span>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div [class]="'h-full transition-all duration-300 ' + getPasswordStrength(changePassNew).color"
+                [style.width]="getPasswordStrength(changePassNew).width"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Confirm New Password <span class="text-rose-500">*</span></label>
+          <input type="password" [(ngModel)]="changePassConfirm" name="changePassConfirm" required placeholder="Re-enter new password"
+            class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+        </div>
+
+        <div *ngIf="changePassErrorMessage" class="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300 text-xs font-medium rounded-[8px]">
+          ⚠️ {{ changePassErrorMessage }}
+        </div>
+
+        <button type="submit" [disabled]="isChangingPassword"
+          class="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-[10px] text-sm shadow transition">
+          {{ isChangingPassword ? 'Saving Password...' : 'Save Password & Enter Portal' }}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 8. SLIDE-IN CALLBACK & DEMO PASS DRAWER                                   -->
+  <!-- ========================================================================= -->
+  <div *ngIf="showQuickLeadSidebar" class="fixed inset-0 z-50 overflow-hidden pointer-events-none flex justify-end">
+    <div (click)="closeQuickLeadSidebar()" class="fixed inset-0 bg-slate-950/50 pointer-events-auto animate-fade-in"></div>
+
+    <div role="dialog" aria-modal="true" aria-label="Request Callback & Demo"
+      data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true"
+      class="relative w-full max-w-md bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 pointer-events-auto flex flex-col justify-between h-full animate-fade-in overflow-hidden">
+      <div class="bg-slate-900 text-white p-6 relative shrink-0">
+        <div class="flex justify-between items-start">
+          <div class="space-y-1">
+            <span class="inline-flex items-center gap-1.5 bg-indigo-500/30 text-indigo-300 text-[11px] font-semibold uppercase px-2.5 py-0.5 rounded-full">
+              Free Demo & Syllabus
+            </span>
+            <h3 class="text-xl font-semibold text-white">Let's Connect</h3>
+            <p class="text-xs text-slate-300">Speak directly with an admissions mentor for batch schedules.</p>
+          </div>
+          <button (click)="closeQuickLeadSidebar()" class="text-white/70 hover:text-white text-2xl font-bold">&times;</button>
+        </div>
+      </div>
+
+      <div class="p-6 space-y-5 flex-1 overflow-y-auto">
+        <div *ngIf="quickLeadStep === 1" class="space-y-4 animate-fade-in">
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">First Name <span class="text-rose-500">*</span></label>
+            <input type="text" [(ngModel)]="quickLeadFirstName" name="quickLeadFirstName" placeholder="e.g. Rahul"
+              class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Last Name</label>
+            <input type="text" [(ngModel)]="quickLeadLastName" name="quickLeadLastName" placeholder="e.g. Sharma"
+              class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+          <button type="button" (click)="onQuickLeadNameContinue()"
+            class="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-[10px] text-sm shadow transition">
+            Continue &rarr;
+          </button>
+        </div>
+
+        <div *ngIf="quickLeadStep === 2" class="space-y-4 animate-fade-in">
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Mobile / WhatsApp Number <span class="text-rose-500">*</span></label>
+            <div class="flex gap-0 relative">
+              <button type="button" (click)="toggleCountryDropdown('quickLead')"
+                class="flex items-center gap-1 h-12 px-2.5 rounded-l-[10px] border border-r-0 border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition whitespace-nowrap">
+                <span class="text-sm">{{ getCountryFlag(quickLeadCountryCode) }}</span>
+                <span class="text-xs">{{ quickLeadCountryCode }}</span>
+                <span class="text-[9px] text-slate-400">▼</span>
+              </button>
+              <div *ngIf="showQuickLeadCountryDropdown" class="absolute top-[52px] left-0 z-50 w-56 max-h-52 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl">
+                <div class="sticky top-0 bg-white dark:bg-slate-800 p-2 border-b border-slate-100 dark:border-slate-700">
+                  <input type="text" [(ngModel)]="countrySearchTerm" name="quickLeadCountrySearch" placeholder="Search..."
+                    class="w-full h-7 px-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-xs outline-none focus:ring-1 focus:ring-indigo-500" />
+                </div>
+                <button *ngFor="let cc of filteredCountryCodes" type="button"
+                  (click)="selectCountryCode(cc.code, 'quickLead')"
+                  class="flex items-center gap-2 w-full px-3 py-1.5 text-left text-xs hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition">
+                  <span>{{ cc.flag }}</span>
+                  <span class="text-slate-700 dark:text-slate-200">{{ cc.label }}</span>
+                </button>
+              </div>
+              <input type="tel" [(ngModel)]="quickLeadPhone" name="quickLeadPhone" required placeholder="98765 43210"
+                class="flex-1 h-12 px-3 rounded-r-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address <span class="text-rose-500">*</span></label>
+            <input type="email" [(ngModel)]="quickLeadEmail" name="quickLeadEmail" required placeholder="e.g. rahul@gmail.com"
+              class="w-full h-12 px-4 rounded-[10px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-base focus:ring-2 focus:ring-indigo-500 outline-none" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Preferred Campus</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" (click)="quickLeadLocation = 'Bangalore'"
+                [class]="'h-11 px-3 rounded-[10px] border text-xs font-semibold transition ' + (quickLeadLocation === 'Bangalore' ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 text-indigo-600' : 'border-slate-200 dark:border-slate-700')">
+                Bangalore Hub
+              </button>
+              <button type="button" (click)="quickLeadLocation = 'Chennai'"
+                [class]="'h-11 px-3 rounded-[10px] border text-xs font-semibold transition ' + (quickLeadLocation === 'Chennai' ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 text-indigo-600' : 'border-slate-200 dark:border-slate-700')">
+                Chennai Hub
+              </button>
+            </div>
+          </div>
+
+          <button type="button" (click)="submitQuickLead()" [disabled]="isSubmittingQuickLead"
+            class="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-[10px] text-sm shadow transition">
+            {{ isSubmittingQuickLead ? 'Connecting...' : 'Request Callback' }}
+          </button>
+        </div>
+
+        <div *ngIf="quickLeadStep === 3" class="space-y-4 text-center py-4 animate-fade-in">
+          <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+            ✓
+          </div>
+          <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Thank You, {{ quickLeadFirstName }}!</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400">Our admissions counselor will call you at +91 {{ quickLeadPhone }} shortly.</p>
+          <button (click)="closeQuickLeadSidebar()" class="w-full h-11 bg-indigo-600 text-white font-medium rounded-[10px] text-xs">
+            Close
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-400">
+        🔒 Your contact information is 100% private.
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 9. SINGLE FLOATING BUTTON (Hidden on Admin Routes)                         -->
+  <!-- ========================================================================= -->
+  <div *ngIf="!isAdminRoute" class="fixed bottom-6 right-6 z-40 motion-floating-btn">
+    <button (click)="openQuickLeadSidebar()"
+      class="h-12 px-5 inline-flex items-center gap-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-full shadow-lg transition transform hover:scale-105">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 motion-dot-pulse"></span>
+      <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+      </svg>
+      <span>Request Callback</span>
+    </button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 10. GLOBAL TOAST NOTIFICATION OVERLAY                                     -->
+  <!-- ========================================================================= -->
+  <div class="fixed bottom-5 right-5 z-[99999] pointer-events-none flex flex-col gap-2.5 max-w-md w-full px-4 sm:px-0">
     <div *ngFor="let toast of toasts" [class]="
-        'p-4 rounded-xl shadow-lg border text-sm font-medium flex items-center justify-between text-white animate-fade-in transition-all ' +
+        'pointer-events-auto p-4 rounded-xl shadow-2xl border text-sm font-medium flex items-center justify-between text-white animate-fade-in transition ' +
         (toast.type === 'success'
           ? 'bg-emerald-600 border-emerald-500'
           : toast.type === 'error'
@@ -74,282 +1219,12 @@
               ? 'bg-amber-600 border-amber-500'
               : 'bg-indigo-600 border-indigo-500')
       ">
-      <span>{{ toast.message }}</span>
-      <button (click)="toasts.splice(toasts.indexOf(toast), 1)"
-        class="ml-3 text-white/70 hover:text-white font-bold">&times;</button>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500">
-    <div class="w-full px-4 sm:px-6 lg:px-8">
-      <p>&copy; 2026 TVK Technologies. All Rights Reserved. Assured Training & Placement Program.</p>
-    </div>
-  </footer>
-
-  <!-- Login Modal -->
-  <div *ngIf="showLoginModal"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-    <div
-      class="bg-white rounded-2xl border border-slate-100 shadow-2xl max-w-md w-full overflow-hidden animate-fade-in">
-      <div class="p-6 sm:p-8 space-y-6">
-        <div class="flex justify-between items-start">
-          <div>
-            <h2 class="text-2xl font-black text-slate-900">Welcome Back</h2>
-            <p class="text-xs text-slate-400 mt-1">Enter your registered email address to login</p>
-          </div>
-          <button (click)="closeLoginModal()"
-            class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
-        </div>
-
-        <form (ngSubmit)="submitLogin()" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Email Address</label>
-            <input type="email" [(ngModel)]="loginEmail" name="loginEmail" required
-              placeholder="e.g. admin@tvktechs.com, rahul.b@gmail.com"
-              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring focus:ring-blue-100 transition outline-none text-sm" />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Password</label>
-            <div class="relative">
-              <input [type]="showLoginPassword ? 'text' : 'password'" [(ngModel)]="loginPassword" name="loginPassword" required
-                placeholder="Enter your password"
-                class="w-full pl-4 pr-10 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring focus:ring-blue-100 transition outline-none text-sm" />
-              <button type="button" (click)="showLoginPassword = !showLoginPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none">
-                <svg *ngIf="!showLoginPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
-                <svg *ngIf="showLoginPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.822 7.822 3 3m-3-3a9 9 0 0 1-15.635-4.5l3.619-3.619m0 0a3 3 0 0 1 4.243-4.243m4.242 4.242L9.88 9.88" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <button type="submit" [disabled]="isLoggingIn"
-            class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg disabled:opacity-75 transition-all text-sm">
-            {{ isLoggingIn ? 'Logging you in...' : 'Sign In' }}
-          </button>
-        </form>
-
-        <div class="text-center pt-2">
-          <p class="text-xs text-slate-500">
-            New to TVK Portal?
-            <button (click)="openRegModal()" class="text-blue-600 font-bold hover:underline">Register an
-              Account</button>
-          </p>
-        </div>
+      <div class="flex items-center gap-2.5 min-w-0">
+        <span class="text-base shrink-0">{{ toast.type === 'error' ? '⚠️' : toast.type === 'success' ? '✓' : 'ℹ️' }}</span>
+        <span class="truncate">{{ toast.message }}</span>
       </div>
+      <button (click)="toasts.splice(toasts.indexOf(toast), 1)" class="ml-3 text-white/80 hover:text-white font-bold">&times;</button>
     </div>
   </div>
 
-  <!-- Registration Modal -->
-  <div *ngIf="showRegModal"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
-    <div
-      class="bg-white rounded-2xl border border-slate-100 shadow-2xl max-w-lg w-full overflow-hidden animate-fade-in my-8">
-      <div class="p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-start">
-          <div>
-            <h2 class="text-2xl font-black text-slate-900">Create Account</h2>
-            <p class="text-xs text-slate-400 mt-1">Join TVK Technologies training & placements platform</p>
-          </div>
-          <button (click)="closeRegModal()"
-            class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
-        </div>
-
-        <form (ngSubmit)="submitRegister()" class="space-y-4">
-          <!-- Role selector -->
-          <div class="grid grid-cols-3 gap-2 p-1 bg-slate-100 rounded-xl">
-            <button type="button" (click)="regRole = 'student'" [class.bg-white]="regRole === 'student'"
-              [class.shadow-sm]="regRole === 'student'" [class.text-blue-600]="regRole === 'student'"
-              class="py-2 text-center text-xs font-bold rounded-lg text-slate-600 transition">
-              Student Member
-            </button>
-            <button type="button" (click)="regRole = 'trainer'" [class.bg-white]="regRole === 'trainer'"
-              [class.shadow-sm]="regRole === 'trainer'" [class.text-blue-600]="regRole === 'trainer'"
-              class="py-2 text-center text-xs font-bold rounded-lg text-slate-600 transition">
-              Expert Trainer
-            </button>
-            <button type="button" (click)="regRole = 'admin'" [class.bg-white]="regRole === 'admin'"
-              [class.shadow-sm]="regRole === 'admin'" [class.text-blue-600]="regRole === 'admin'"
-              class="py-2 text-center text-xs font-bold rounded-lg text-slate-600 transition">
-              Global Admin
-            </button>
-          </div>
-
-          <!-- General Fields -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="space-y-1">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Full Name</label>
-              <input type="text" [(ngModel)]="regName" name="regName" required placeholder="e.g. Amit Kumar"
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-            </div>
-            <div class="space-y-1">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Email Address</label>
-              <input type="email" [(ngModel)]="regEmail" name="regEmail" required placeholder="e.g. amit@gmail.com"
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-            </div>
-            <div class="space-y-1 sm:col-span-2">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Password</label>
-              <div class="relative">
-                <input [type]="showRegPassword ? 'text' : 'password'" [(ngModel)]="regPassword" name="regPassword" required
-                  placeholder="Choose a strong password"
-                  class="w-full pl-3 pr-10 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-                <button type="button" (click)="showRegPassword = !showRegPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none">
-                  <svg *ngIf="!showRegPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                  </svg>
-                  <svg *ngIf="showRegPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.822 7.822 3 3m-3-3a9 9 0 0 1-15.635-4.5l3.619-3.619m0 0a3 3 0 0 1 4.243-4.243m4.242 4.242L9.88 9.88" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Student-specific detailed fields -->
-          <div *ngIf="regRole === 'student'" class="space-y-4 border-t border-slate-100 pt-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Contact Number</label>
-                <input type="text" [(ngModel)]="regContactNum" name="regContactNum" placeholder="+91 9988776655"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-              </div>
-              <div class="space-y-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">College Name</label>
-                <input type="text" [(ngModel)]="regCollegeName" name="regCollegeName" placeholder="e.g. IIT Madras"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Academic Status</label>
-                <select [(ngModel)]="regAcademicStatus" name="regAcademicStatus"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none bg-white">
-                  <option value="Pursuing (1st Year)">Pursuing (1st Year)</option>
-                  <option value="Pursuing (2nd Year)">Pursuing (2nd Year)</option>
-                  <option value="Pursuing (3rd Year)">Pursuing (3rd Year)</option>
-                  <option value="Pursuing (4th Year)">Pursuing (4th Year)</option>
-                  <option value="Graduated (Looking for Job)">Graduated (Looking for Job)</option>
-                  <option value="Working Professional">Working Professional</option>
-                </select>
-              </div>
-              <div class="space-y-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Branch</label>
-                <select [(ngModel)]="regBranch" name="regBranch"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none bg-white">
-                  <option value="Computer Science & Engineering">Computer Science & Engineering</option>
-                  <option value="Information Technology">Information Technology</option>
-                  <option value="Electronics & Communications">Electronics & Communications</option>
-                  <option value="Electrical & Electronics">Electrical & Electronics</option>
-                  <option value="Mechanical Engineering">Mechanical Engineering</option>
-                  <option value="Civil Engineering">Civil Engineering</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-
-            <div *ngIf="regBranch === 'Other'" class="space-y-1">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Specify Custom Branch</label>
-              <input type="text" [(ngModel)]="regCustomBranch" name="regCustomBranch" placeholder="e.g. Biotechnology"
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Address / City</label>
-                <input type="text" [(ngModel)]="regAddress" name="regAddress" placeholder="e.g. Bangalore, Karnataka"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-              </div>
-              <div class="space-y-1">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Aadhaar / PAN
-                  number</label>
-                <input type="text" [(ngModel)]="regIdDetails" name="regIdDetails" placeholder="e.g. 1234 5678 9012"
-                  class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-              </div>
-            </div>
-
-            <!-- Join Institute Course Enrollment -->
-            <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4 space-y-3">
-              <label class="flex items-center space-x-2.5 cursor-pointer">
-                <input type="checkbox" [(ngModel)]="regIsInstituteMember" name="regIsInstituteMember"
-                  class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500" />
-                <span class="text-xs font-bold text-slate-900">Apply as Student Member to Join Institute & Enroll in
-                  Course</span>
-              </label>
-
-              <div *ngIf="regIsInstituteMember" class="space-y-3 pt-2">
-                <div class="space-y-1">
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Select Training
-                    Program</label>
-                  <select [(ngModel)]="regCourseId" name="regCourseId"
-                    class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none bg-white font-medium">
-                    <option value="">-- Choose Course --</option>
-                    <option *ngFor="let course of courses" [value]="course.id">{{ course.title }}</option>
-                  </select>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div class="space-y-1">
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Payment Mode</label>
-                    <select [(ngModel)]="regPaymentMode" name="regPaymentMode"
-                      class="w-full px-2 py-2 rounded-lg border border-slate-200 text-xs focus:border-blue-500 outline-none bg-white">
-                      <option value="UPI Transfer">UPI Transfer</option>
-                      <option value="Bank NEFT/IMPS">Bank NEFT/IMPS</option>
-                      <option value="EMI Option">Flexible EMI</option>
-                      <option value="Credit/Debit Card">Card Payment</option>
-                    </select>
-                  </div>
-                  <div class="space-y-1">
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Transaction ID</label>
-                    <input type="text" [(ngModel)]="regTxnId" name="regTxnId" placeholder="e.g. TXN9876543"
-                      class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs focus:border-blue-500 outline-none" />
-                  </div>
-                  <div class="space-y-1">
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Amount Paid</label>
-                    <input type="text" [(ngModel)]="regAmount" name="regAmount" placeholder="$299"
-                      class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs focus:border-blue-500 outline-none" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Trainer-specific specialization fields -->
-          <div *ngIf="regRole === 'trainer'" class="space-y-4 border-t border-slate-100 pt-4">
-            <div class="space-y-1">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Specialization Area</label>
-              <input type="text" [(ngModel)]="regSpecialization" name="regSpecialization"
-                placeholder="e.g. Enterprise Java Architect"
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-            </div>
-            <div class="space-y-1">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Strong Technologies (Comma
-                separated)</label>
-              <input type="text" [(ngModel)]="regStrongTechnologies" name="regStrongTechnologies"
-                placeholder="e.g. Core Java, Spring Boot, Hibernate, microservices"
-                class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:border-blue-500 outline-none" />
-            </div>
-          </div>
-
-          <button type="submit" [disabled]="isRegistering"
-            class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg disabled:opacity-75 transition-all text-sm">
-            {{ isRegistering ? 'Processing Registration...' : 'Complete Account Registration' }}
-          </button>
-        </form>
-
-        <div class="text-center pt-2 border-t border-slate-100">
-          <p class="text-xs text-slate-500">
-            Already have an account?
-            <button (click)="openLoginModal()" class="text-blue-600 font-bold hover:underline">Log In</button>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>

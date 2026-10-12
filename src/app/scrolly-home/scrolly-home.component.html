@@ -1,0 +1,513 @@
+<div #scrollyContainer class="scrolly-root relative">
+
+  <!-- Dev-Only HUD Overlay (?debug=1) -->
+  <div *ngIf="isDebugMode" class="scrolly-debug-hud">
+    <div class="hud-title">⚡ SCROLLYTELLING DEBUG HUD</div>
+    <div class="hud-row"><span>Scroll Y:</span><span class="hud-val">{{ currentScrollY }}px</span></div>
+    <div class="hud-row"><span>Motion Ready:</span><span class="hud-val">{{ motionReady ? 'ACTIVE' : 'STATIC FALLBACK' }}</span></div>
+    <div class="hud-row"><span>Scene A (Pill Roll):</span><span class="hud-val">{{ (progressPillRoll * 100).toFixed(0) }}%</span></div>
+    <div class="hud-row"><span>Scene B (Dark Panel):</span><span class="hud-val">{{ (progressDarkPanel * 100).toFixed(0) }}%</span></div>
+    <div class="hud-row"><span>Scene C (Step Swap):</span><span class="hud-val">{{ (progressStepSwap * 100).toFixed(0) }}% [P{{ activeStepIndex + 1 }}]</span></div>
+    <div class="hud-row"><span>Total Height:</span><span class="hud-val">{{ totalPageHeight }}px</span></div>
+  </div>
+
+  <!-- Ambient Blurred Gradient Blobs behind Hero and Dark Panels -->
+  <div class="gradient-blob-hero"></div>
+  <div class="gradient-blob-pillroll"></div>
+
+  <!-- ======================================================================= -->
+  <!-- 1. HERO INTRO: 100VH WRAPPER                                            -->
+  <!-- ======================================================================= -->
+  <div #wrapperHero id="wrapper-hero" class="scene-wrapper-hero relative">
+    <div class="scene-hero-inner">
+      <div #heroContent class="hero-content-box max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
+        
+        <!-- Left: High-Impact Typography & Action Suite (1 Headline, 1 Subline) -->
+        <div class="lg:col-span-6 space-y-4">
+          <div class="inline-flex items-center gap-2.5 px-3.5 py-1 rounded-full bg-purple-500/10 dark:bg-purple-950/60 border border-purple-500/30 text-[#5B3DF5] dark:text-[#A855F7] text-xs font-bold uppercase tracking-wider shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>🚀 Bangalore (BTM) &bull; Chennai (OMR) Placement Hubs</span>
+          </div>
+
+          <h1 class="scrolly-h1 text-slate-900 dark:text-white">
+            <span class="block">Launch Your</span>
+            <span class="block text-gradient-primary">Tech Career</span>
+            <span class="block">with 100% Placement.</span>
+          </h1>
+
+          <p class="scrolly-subline">
+            Transform into a production-ready Software Engineer with Java 21, Spring Boot 3, Angular 18, and Cloud Microservices. Direct placement drives until you step into your official tech role.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3.5 pt-1">
+            <a routerLink="/courses" 
+              class="scrolly-pill px-7 py-3.5 btn-vibrant-glow text-white font-bold text-base shadow-xl hover:scale-105 active:scale-95 transition-all">
+              <span>Explore Courses &rarr;</span>
+            </a>
+            <button (click)="openDemoModal()"
+              class="scrolly-pill px-6 py-3.5 glass-card text-slate-800 dark:text-slate-100 font-bold text-base hover:border-purple-500/50 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all">
+              <span>Book Free Demo</span>
+            </button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-6 pt-4 text-xs text-slate-600 dark:text-slate-400 font-medium border-t border-slate-300/60 dark:border-slate-800/80">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <div><strong class="text-slate-900 dark:text-white font-black text-sm">2,850+</strong> Placed</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#5B3DF5]"></span>
+              <div><strong class="text-slate-900 dark:text-white font-black text-sm">₹8.4 LPA</strong> Avg CTC</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#EC4899]"></span>
+              <div><strong class="text-slate-900 dark:text-white font-black text-sm">160+</strong> Hiring Partners</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Enlarged Hero Visual Cluster with Clean Companion Badges -->
+        <div class="lg:col-span-6 relative flex items-center justify-center">
+          <div class="w-full max-w-[620px] relative flex items-center justify-center p-2 sm:p-4 my-2">
+            
+            <!-- Central Enlarged Floating Laptop Window -->
+            <div class="w-full max-w-[500px] relative scrolly-float-elem z-10">
+              <app-scrolly-illustration type="laptop-code"></app-scrolly-illustration>
+              
+              <!-- 1. Graduation Cap (Top-Left Floating Wobble) -->
+              <div class="absolute -top-5 -left-5 w-14 h-14 sm:w-16 sm:h-16 drop-shadow-2xl animate-float-wobble z-30 pointer-events-none">
+                <app-scrolly-illustration type="graduation-cap"></app-scrolly-illustration>
+              </div>
+
+              <!-- 2. Golden Trophy (Bottom-Right Counter Float) -->
+              <div class="absolute -bottom-5 -right-5 w-16 h-16 sm:w-18 sm:h-18 drop-shadow-2xl animate-float-counter z-30 pointer-events-none">
+                <app-scrolly-illustration type="trophy"></app-scrolly-illustration>
+              </div>
+
+              <!-- 3. Guarantee Token Badge (Right Center Orbit) -->
+              <div class="absolute top-1/2 -right-5 w-14 h-14 -translate-y-1/2 drop-shadow-2xl animate-float-wobble z-30 pointer-events-none">
+                <app-scrolly-illustration type="guarantee-badge"></app-scrolly-illustration>
+              </div>
+
+              <!-- 4. Rotating Sparkle Star (Top Right Continuous Spin) -->
+              <div class="absolute -top-4 right-6 w-9 h-9 drop-shadow-xl animate-rotate-sparkle z-30 pointer-events-none">
+                <app-scrolly-illustration type="sparkle-star"></app-scrolly-illustration>
+              </div>
+            </div>
+
+            <!-- COMPANION SATELLITE CARD: Bottom-Left Verified Placement Card (Coming from Right with -6° tilt) -->
+            <div class="hero-card-tilt-left absolute -bottom-7 -left-2 sm:-left-8 w-60 sm:w-68 p-3.5 rounded-2xl bg-[#0B132B]/95 border border-emerald-500/40 backdrop-blur-xl shadow-[0_20px_50px_rgba(16,185,129,0.35)] z-20 pointer-events-auto">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                <div class="flex items-center space-x-1.5">
+                  <span class="text-amber-400 text-sm">⭐</span>
+                  <span class="text-xs font-bold text-white">Amazon AWS Placement</span>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">Verified</span>
+              </div>
+              <div class="pt-2 flex items-center justify-between">
+                <div>
+                  <div class="text-[10px] text-slate-400">Issued Package</div>
+                  <div class="text-base font-black text-emerald-400">₹14.2 LPA</div>
+                </div>
+                <span class="text-[10px] font-mono px-2.5 py-1 rounded bg-slate-800/80 text-slate-300 font-semibold">100% Placed</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================= -->
+  <!-- 2. SCENE A: PILL ROLL (220VH TALL WRAPPER WITH 100VH STICKY INNER)       -->
+  <!-- ======================================================================= -->
+  <div #wrapperPillRoll id="wrapper-pill-roll" class="scene-wrapper-pillroll relative">
+    <div id="inner-pill-roll" class="scene-sticky-inner">
+      <div #sceneAContent class="scene-a-grid max-w-7xl mx-auto w-full px-4 sm:px-8">
+        
+        <!-- Left Statement: Headline capped by height min(6vw, 11vh) + Subline (Right Aligned) -->
+        <div class="scene-a-col-left space-y-3">
+          <h2 class="scene-a-headline text-slate-900 dark:text-white">
+            Less <span class="text-gradient-purple">confusion.</span>
+          </h2>
+          <p class="scene-subline text-right ml-auto">
+            No fragmented tutorials or dead-end theory loops.
+          </p>
+        </div>
+
+        <!-- Center Column: 3-layer stack (pills behind, glowing floating trophy in front) -->
+        <div class="scene-a-col-center">
+          
+          <!-- Pill List Mask Container -->
+          <div class="pill-list-container">
+            <div #pillRollTrack class="pill-roll-track pointer-events-none">
+              <div *ngFor="let pill of pillRollStack; let i = index" 
+                class="pill-matrix-item"
+                [attr.data-index]="i">
+                <img [src]="pill.icon" [alt]="pill.title" class="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0" />
+                <span class="text-base sm:text-lg font-extrabold tracking-tight">{{ pill.title }}</span>
+                <span class="text-xs font-mono px-3 py-1 rounded-full bg-purple-500/15 text-[#5B3DF5] dark:text-[#C084FC] font-bold shrink-0">{{ pill.tag }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Centered Floating Win Cup (No solid blocking background box - Cup only) -->
+          <div class="scene-a-trophy-card pointer-events-none">
+            <div class="trophy-glow-backdrop"></div>
+            <div class="trophy-pedestal-solid">
+              <app-scrolly-illustration type="trophy" class="w-32 h-32 md:w-40 md:h-40"></app-scrolly-illustration>
+            </div>
+            <div class="trophy-card-label">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 tracking-tight">Top 1% Curriculum</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Statement: Headline capped by height min(6vw, 11vh) + Subline (Left Aligned) -->
+        <div class="scene-a-col-right space-y-3">
+          <h2 class="scene-a-headline text-slate-900 dark:text-white">
+            More <span class="text-gradient-accent">career.</span>
+          </h2>
+          <p class="scene-subline text-left mr-auto">
+            Direct interview drives with 160+ hiring partners.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================= -->
+  <!-- 3. SCENE B: DARK PANEL (200VH TALL WRAPPER WITH 100VH STICKY INNER)      -->
+  <!-- ======================================================================= -->
+  <div #wrapperDarkPanel id="wrapper-dark-panel" class="scene-wrapper-darkpanel relative">
+    
+    <!-- Blurred purple gradient blob behind dark panel -->
+    <div class="gradient-blob-darkpanel"></div>
+
+    <div id="inner-dark-panel" class="scene-sticky-inner">
+      <div #darkPanelBox class="inset-dark-panel p-6 sm:p-10 md:p-14 space-y-8 md:space-y-10 relative z-20">
+        
+        <!-- Purple Radial Glow Layer -->
+        <div class="dark-panel-glow"></div>
+
+        <!-- Panel Header & Carousel Controls -->
+        <div class="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-purple-900/50 pb-6">
+          <div class="space-y-3">
+            <span class="scrolly-pill bg-purple-500/20 text-[#E4DBFF] border border-purple-500/40 text-xs uppercase font-extrabold tracking-wider">
+              Institutional Pedigree
+            </span>
+            <h2 class="text-3xl sm:text-5xl font-semibold text-white tracking-tight">
+              Why students choose <span class="text-gradient-accent">TVK</span>.
+            </h2>
+            <p class="text-slate-300 text-sm sm:text-base max-w-xl">
+              A battle-tested training framework engineered by Staff Architects to eliminate candidate hesitation in tech interviews.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button (click)="prevFeature()" 
+              class="w-12 h-12 rounded-full border border-purple-800/60 bg-[#0E0B24]/90 text-white flex items-center justify-center hover:bg-[#5B3DF5] hover:border-[#5B3DF5] transition-all">
+              &larr;
+            </button>
+            <button (click)="nextFeature()" 
+              class="w-12 h-12 rounded-full bg-[#5B3DF5] text-white flex items-center justify-center hover:bg-[#8B5CF6] shadow-lg shadow-purple-500/30 transition-all">
+              &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Bento Cards Grid -->
+        <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div *ngFor="let card of visibleFeatureCards; let i = index" 
+            class="bento-card flex flex-col justify-between space-y-6">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-3xl">{{ card.icon }}</span>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-[#E4DBFF] border border-white/10">
+                  {{ card.badge }}
+                </span>
+              </div>
+              <h3 class="text-xl font-bold text-white tracking-tight">{{ card.title }}</h3>
+              <p class="text-xs text-slate-300 leading-relaxed font-normal">{{ card.desc }}</p>
+            </div>
+            <div class="text-[11px] text-[#A855F7] font-semibold pt-3 border-t border-purple-900/40 flex items-center justify-between">
+              <span>{{ card.highlight }}</span>
+              <span>Bangalore & Chennai &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Infinite Marquee Ticker with Vignette Edge -->
+        <div class="relative z-10 scrolly-marquee-container -mx-6 sm:-mx-10 md:-mx-14 -mb-6 sm:-mb-10 md:-mb-14">
+          <div class="scrolly-marquee-content">
+            <span class="text-sm font-bold uppercase tracking-widest text-slate-200 flex items-center gap-8">
+              <span class="text-[#8B5CF6]">⚡ Job-ready Stacks</span> &bull;
+              <span class="text-[#EC4899]">🔥 Enterprise Projects</span> &bull;
+              <span class="text-[#D5F5E3]">✓ 100% Placement Support</span> &bull;
+              <span class="text-[#D6ECFF]">🚀 160+ Hiring Partners</span> &bull;
+              <span class="text-[#FFE3CC]">🏆 ₹24.5 LPA Highest Package</span> &bull;
+              <span class="text-[#E4DBFF]">💳 Zero-Cost EMI</span> &bull;
+            </span>
+            <span class="text-sm font-bold uppercase tracking-widest text-slate-200 flex items-center gap-8">
+              <span class="text-[#8B5CF6]">⚡ Job-ready Stacks</span> &bull;
+              <span class="text-[#EC4899]">🔥 Enterprise Projects</span> &bull;
+              <span class="text-[#D5F5E3]">✓ 100% Placement Support</span> &bull;
+              <span class="text-[#D6ECFF]">🚀 160+ Hiring Partners</span> &bull;
+              <span class="text-[#FFE3CC]">🏆 ₹24.5 LPA Highest Package</span> &bull;
+              <span class="text-[#E4DBFF]">💳 Zero-Cost EMI</span> &bull;
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================= -->
+  <!-- 4. SCENE C: STEP SWAP (400VH TALL WRAPPER WITH 100VH STICKY INNER)       -->
+  <!-- ======================================================================= -->
+  <div #wrapperStepSwap id="wrapper-step-swap" class="scene-wrapper-stepswap relative">
+    <div id="inner-step-swap" class="scene-sticky-inner">
+      <div class="max-w-7xl mx-auto w-full space-y-8 z-20">
+        
+        <!-- Section Eyebrow & Title -->
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+          <span class="scrolly-pill bg-purple-500/10 dark:bg-purple-950/60 text-[#5B3DF5] dark:text-[#A855F7] border border-purple-500/30 text-xs uppercase font-extrabold tracking-widest">
+            PROGRAMS &bull; ARCHITECTURAL PHASES
+          </span>
+          <h2 class="scrolly-h2 text-slate-900 dark:text-white">
+            Switch to a <span class="text-gradient-primary">smarter tech career</span>.
+          </h2>
+          <p class="scrolly-subline mx-auto text-sm sm:text-base">
+            Four structured phases taking you from fundamental coding to enterprise microservices and guaranteed placement offers.
+          </p>
+        </div>
+
+        <!-- Two-Column Layout: Left = Step Text, Right = Large Rounded Panel (60vh) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          <!-- LEFT: Step Text Block, Progress Rail, and Phase Checklist -->
+          <div #stepLeftContent class="lg:col-span-5 flex items-start gap-6 step-left-content">
+            
+            <!-- Stepper Rail & 4 Glowing Number Dots -->
+            <div class="flex flex-col items-center gap-4 shrink-0 pt-2">
+              <div *ngFor="let step of stepsData; let i = index" 
+                class="w-9 h-9 rounded-full border-2 flex items-center justify-center font-bold text-xs font-mono transition-all duration-300"
+                [class.bg-[#5B3DF5]="activeStepIndex === i"
+                [class.text-white]="activeStepIndex === i"
+                [class.border-[#5B3DF5]="activeStepIndex === i"
+                [class.shadow-lg]="activeStepIndex === i"
+                [class.border-slate-300]="activeStepIndex !== i"
+                [class.text-slate-400]="activeStepIndex !== i">
+                {{ i + 1 }}
+              </div>
+              
+              <!-- Dynamic Glowing Fill Rail -->
+              <div class="step-progress-rail">
+                <div class="step-progress-fill" [style.height]="stepProgressPercent + '%'"></div>
+              </div>
+            </div>
+
+            <!-- Active Step Content Block -->
+            <div class="space-y-4">
+              
+              <!-- Sliding Phase Tag -->
+              <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-widest border transition-all duration-300"
+                [ngClass]="stepsData[activeStepIndex].tagColor">
+                <span>{{ stepsData[activeStepIndex].tag }}</span>
+                <span>&bull;</span>
+                <span>Phase {{ stepsData[activeStepIndex].stepNum }}</span>
+              </div>
+
+              <!-- Dynamic Title -->
+              <h3 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-900 dark:text-white tracking-tight leading-snug">
+                {{ stepsData[activeStepIndex].title }}
+              </h3>
+
+              <!-- Phase Description -->
+              <p class="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
+                {{ stepsData[activeStepIndex].desc }}
+              </p>
+
+              <!-- Learning Outcome Bullets -->
+              <ul class="space-y-2 pt-1 text-xs text-slate-800 dark:text-slate-300 font-medium">
+                <li *ngFor="let pt of stepsData[activeStepIndex].points" class="flex items-center gap-2.5">
+                  <span class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-[10px]">✓</span>
+                  <span>{{ pt }}</span>
+                </li>
+              </ul>
+
+              <div class="pt-3 flex items-center gap-4">
+                <a routerLink="/courses" class="scrolly-pill px-7 py-3 btn-vibrant-glow text-white font-bold text-sm shadow-lg">
+                  Explore Curriculum &rarr;
+                </a>
+                <button (click)="openDemoModal()" class="text-xs font-bold text-[#5B3DF5] dark:text-[#A855F7] hover:underline">
+                  Book Free Trial Class
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT: Large Rounded Stage Card (min-height 60vh, mockup min-width 420px) -->
+          <div class="lg:col-span-7">
+            <div #stepStageCard class="step-stage-card" [ngClass]="stepsData[activeStepIndex].stageClass">
+              <app-device-mockup [activeStepIndex]="activeStepIndex"></app-device-mockup>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================= -->
+  <!-- 5. SCENE D: TESTIMONIALS (INDEPENDENT AUTO HEIGHT SECTION)               -->
+  <!-- ======================================================================= -->
+  <section id="scene-testimonials" class="scene-wrapper-auto py-20 relative">
+    <div class="max-w-6xl mx-auto w-full space-y-8 px-4 sm:px-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <span class="scrolly-pill bg-purple-500/10 text-[#5B3DF5] dark:text-[#A855F7] border border-purple-500/30 text-xs uppercase font-extrabold">
+            Verified Placements
+          </span>
+          <h2 class="scrolly-h2 text-slate-900 dark:text-white mt-2">
+            Student success stories.
+          </h2>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button (click)="prevTestimonial()" class="w-12 h-12 rounded-full glass-card flex items-center justify-center text-slate-800 dark:text-white hover:border-[#5B3DF5] transition-all">
+            &larr;
+          </button>
+          <button (click)="nextTestimonial()" class="w-12 h-12 rounded-full bg-[#5B3DF5] text-white flex items-center justify-center hover:bg-[#8B5CF6] shadow-lg shadow-purple-500/30 transition-all">
+            &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Glass Testimonial Spotlight Card -->
+      <div class="glass-card p-8 md:p-12 border border-slate-300/60 dark:border-slate-800/80 shadow-2xl relative overflow-hidden">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          
+          <div class="md:col-span-4 flex flex-col items-center text-center space-y-3">
+            <div class="relative w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border-4 border-[#5B3DF5]/30 shadow-2xl">
+              <img [src]="testimonials[activeTestimonialIndex].avatar" [alt]="testimonials[activeTestimonialIndex].name" class="w-full h-full object-cover" />
+            </div>
+            <span class="text-xs px-3.5 py-1 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 font-extrabold border border-emerald-500/30">
+              {{ testimonials[activeTestimonialIndex].package }} Offer
+            </span>
+            <span class="text-[11px] text-slate-500 font-medium">{{ testimonials[activeTestimonialIndex].campus }}</span>
+          </div>
+
+          <div class="md:col-span-8 space-y-4">
+            <span class="text-6xl text-[#5B3DF5] font-serif leading-none block">“</span>
+            <p class="text-lg sm:text-2xl text-slate-800 dark:text-slate-100 font-semibold leading-relaxed">
+              {{ testimonials[activeTestimonialIndex].quote }}
+            </p>
+            <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+              <h4 class="text-base font-bold text-slate-900 dark:text-white">{{ testimonials[activeTestimonialIndex].name }}</h4>
+              <p class="text-xs text-[#5B3DF5] dark:text-[#A855F7] font-bold">
+                {{ testimonials[activeTestimonialIndex].role }} &bull; <strong class="text-slate-900 dark:text-slate-200">{{ testimonials[activeTestimonialIndex].company }}</strong>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ======================================================================= -->
+  <!-- 6. SCENE E: FAQ ACCORDION (INDEPENDENT AUTO HEIGHT SECTION)              -->
+  <!-- ======================================================================= -->
+  <section id="scene-faq" class="scene-wrapper-auto py-20 relative">
+    <div class="max-w-4xl mx-auto w-full space-y-6 px-4 sm:px-6">
+      
+      <div class="text-center space-y-2">
+        <span class="scrolly-pill bg-purple-500/10 text-[#5B3DF5] dark:text-[#A855F7] border border-purple-500/30 text-xs uppercase font-extrabold">
+          Admissions & Assistance
+        </span>
+        <h2 class="scrolly-h2 text-slate-900 dark:text-white">
+          Answers before you ask.
+        </h2>
+      </div>
+
+      <div class="space-y-3 pt-4">
+        <div *ngFor="let faq of faqs; let i = index" 
+          class="glass-card overflow-hidden">
+          <button (click)="toggleFaq(i)" 
+            class="w-full px-6 py-5 flex items-center justify-between text-left font-bold text-slate-900 dark:text-white text-base">
+            <h3 class="font-bold text-base text-slate-900 dark:text-white leading-snug m-0 p-0">{{ faq.question }}</h3>
+            <span class="text-[#5B3DF5] transition-transform duration-300 font-bold shrink-0 ml-4" [class.rotate-180]="faq.isOpen">
+              ▼
+            </span>
+          </button>
+          <div class="scrolly-faq-body" [class.open]="faq.isOpen">
+            <div class="scrolly-faq-content px-6 pb-6 text-sm text-slate-700 dark:text-slate-300 leading-relaxed border-t border-slate-200 dark:border-slate-800 pt-3">
+              <p class="m-0 p-0 leading-relaxed">{{ faq.answer }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ======================================================================= -->
+  <!-- 7. SCENE F: RADIANT CTA PANEL (INDEPENDENT AUTO HEIGHT SECTION)          -->
+  <!-- ======================================================================= -->
+  <section id="scene-cta" class="scene-wrapper-auto py-20 relative">
+    <div class="max-w-4xl mx-auto w-full px-4 sm:px-6">
+      
+      <div class="p-10 md:p-14 rounded-[36px] bg-[#0E0B24] text-white border border-purple-800/40 shadow-[0_30px_90px_rgba(91,61,245,0.35)] relative overflow-hidden text-center space-y-6">
+        <span class="inline-block text-xs uppercase tracking-widest text-[#E4DBFF] font-extrabold">
+          Batches Starting This Monday
+        </span>
+
+        <h3 class="text-3xl sm:text-5xl font-semibold tracking-tight max-w-2xl mx-auto leading-tight">
+          Your tech career starts <span class="text-gradient-primary">here</span>.
+        </h3>
+
+        <p class="text-slate-300 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
+          Walk in to our Bangalore (BTM Layout) or Chennai (OMR) hub for a free 1-on-1 career consultation and live classroom demo.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <button (click)="openDemoModal()" 
+            class="scrolly-pill px-8 py-4 btn-vibrant-glow text-white font-black text-base shadow-2xl hover:scale-105 active:scale-95 transition-all">
+            Book Free Demo Class &rarr;
+          </button>
+          <a routerLink="/courses" 
+            class="scrolly-pill px-7 py-4 bg-[#14122B] hover:bg-[#1E1B3E] text-white font-bold text-base border border-purple-800/60 transition-all">
+            View All Courses
+          </a>
+        </div>
+
+        <div class="pt-6 text-xs text-slate-400 flex flex-wrap items-center justify-center gap-4">
+          <span>🔒 100% Placement Assurance</span>
+          <span>&bull;</span>
+          <span>💳 0% No-Cost EMI Available</span>
+          <span>&bull;</span>
+          <span>🏢 160+ Hiring Partners</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>

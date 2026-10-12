@@ -1,0 +1,897 @@
+/* ========================================================================= */
+/* TVK TECHNOLOGIES PROGRESSIVE STICKY SCROLLYTELLING DESIGN SYSTEM          */
+/* CSS STICKY + RAF PROGRESS ARCHITECTURE (NO GSAP PINNING / NO SPACERS)     */
+/* Exact Color Palette:                                                      */
+/* --bg #F5F3EE, --ink #14121F, --brand #5B3DF5, --brand-2 #8B5CF6           */
+/* pastels: lavender #E4DBFF, blush #FFD9E6, mint #D5F5E3, peach #FFE3CC,   */
+/* sky #D6ECFF; dark panels #0E0B24 with purple radial glow;                 */
+/* accent gradient: linear-gradient(135deg, #5B3DF5, #A855F7, #EC4899)      */
+/* ========================================================================= */
+
+:root {
+  --bg: #F5F3EE;
+  --ink: #14121F;
+  --card: #FFFFFF;
+  --brand: #5B3DF5;
+  --brand-2: #8B5CF6;
+  --lavender: #E4DBFF;
+  --blush: #FFD9E6;
+  --mint: #D5F5E3;
+  --peach: #FFE3CC;
+  --sky: #D6ECFF;
+  --dark-panel: #0E0B24;
+  --accent-gradient: linear-gradient(135deg, #5B3DF5 0%, #A855F7 50%, #EC4899 100%);
+
+  --scrolly-bg: var(--bg);
+  --scrolly-surface: #FFFFFF;
+  --scrolly-surface-glass: rgba(255, 255, 255, 0.90);
+  --scrolly-text: var(--ink);
+  --scrolly-text-muted: #4B485E;
+  --scrolly-border: rgba(20, 18, 31, 0.08);
+  --scrolly-glow: rgba(91, 61, 245, 0.16);
+}
+
+:host-context(.dark) {
+  --bg: #0E0B24;
+  --ink: #F5F3EE;
+  --card: #14122B;
+  --scrolly-bg: #0A081A;
+  --scrolly-surface: #14122B;
+  --scrolly-surface-glass: rgba(20, 18, 43, 0.85);
+  --scrolly-text: #F5F3EE;
+  --scrolly-text-muted: #A3A0B8;
+  --scrolly-border: rgba(255, 255, 255, 0.12);
+  --scrolly-glow: rgba(139, 92, 246, 0.28);
+}
+
+.scrolly-root {
+  background-color: var(--scrolly-bg);
+  color: var(--scrolly-text);
+  overflow: visible;
+  font-family: 'Plus Jakarta Sans', Inter, -apple-system, sans-serif;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  position: relative;
+  width: 100%;
+}
+
+/* ========================================================================= */
+/* 1. TALL WRAPPERS & CSS STICKY INNERS (NO GSAP PIN / NO PIN-SPACERS)       */
+/* ========================================================================= */
+.scene-wrapper-hero {
+  min-height: auto;
+  position: relative;
+  width: 100%;
+}
+
+.scene-hero-inner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 1.75rem 1.5rem 1rem;
+  z-index: 10;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .scene-hero-inner {
+    padding: 2.25rem 3rem 1.25rem;
+  }
+}
+
+.scene-wrapper-pillroll {
+  height: 140vh;
+  position: relative;
+  width: 100%;
+}
+
+.scene-wrapper-darkpanel {
+  height: 140vh;
+  position: relative;
+  width: 100%;
+}
+
+.scene-wrapper-stepswap {
+  height: 360vh;
+  position: relative;
+  width: 100%;
+}
+
+.scene-wrapper-auto {
+  height: auto;
+  position: relative;
+  width: 100%;
+}
+
+/* The inner scene sticks to top: 0 for the duration of its tall wrapper */
+.scene-sticky-inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 2rem 1.5rem;
+  overflow: hidden;
+  z-index: 10;
+}
+
+@media (min-width: 768px) {
+  .scene-sticky-inner {
+    padding: 2.5rem 3rem;
+  }
+}
+
+/* Mobile & Reduced-Motion Fallback: Collapse tall wrappers to natural flow */
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .scene-wrapper-pillroll,
+  .scene-wrapper-darkpanel,
+  .scene-wrapper-stepswap {
+    height: auto !important;
+  }
+  .scene-sticky-inner {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh;
+    padding: 4.5rem 1.25rem !important;
+    overflow: visible !important;
+  }
+}
+
+/* ========================================================================= */
+/* 2. GRADIENT BLOBS BEHIND HERO AND DARK PANELS                             */
+/* ========================================================================= */
+.gradient-blob-hero {
+  position: absolute;
+  top: -5%;
+  left: 25%;
+  width: 55vw;
+  height: 55vh;
+  background: radial-gradient(circle, rgba(91, 61, 245, 0.22) 0%, rgba(139, 92, 246, 0.18) 40%, rgba(236, 72, 153, 0.12) 65%, transparent 80%);
+  filter: blur(85px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gradient-blob-pillroll {
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 50vw;
+  height: 50vh;
+  background: radial-gradient(circle, rgba(228, 219, 255, 0.7) 0%, rgba(214, 236, 255, 0.5) 45%, rgba(255, 217, 230, 0.4) 70%, transparent 85%);
+  filter: blur(95px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+:host-context(.dark) .gradient-blob-pillroll {
+  background: radial-gradient(circle, rgba(91, 61, 245, 0.25) 0%, rgba(139, 92, 246, 0.2) 45%, rgba(236, 72, 153, 0.15) 70%, transparent 85%);
+}
+
+.gradient-blob-darkpanel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75vw;
+  height: 60vh;
+  background: radial-gradient(circle, rgba(91, 61, 245, 0.35) 0%, rgba(139, 92, 246, 0.25) 45%, rgba(236, 72, 153, 0.18) 70%, transparent 85%);
+  filter: blur(110px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ========================================================================= */
+/* 3. TYPOGRAPHY (CLAMP 3rem-8vw-8rem, WEIGHT 600, TIGHT TRACKING)           */
+/* ========================================================================= */
+.scrolly-h1 {
+  font-size: clamp(2.2rem, 4.2vw, 4.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+
+.scrolly-h2 {
+  font-size: clamp(2.2rem, 4.5vw, 4.2rem);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+
+.scene-clamp-headline {
+  font-size: clamp(3rem, 8vw, 8rem);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.scrolly-subline {
+  font-size: clamp(1.05rem, 1.3vw, 1.3rem);
+  line-height: 1.6;
+  max-width: 58ch;
+  color: var(--scrolly-text-muted);
+}
+
+.scene-subline {
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--scrolly-text-muted);
+  max-width: 38ch;
+}
+
+/* Accent Gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #5B3DF5 0%, #A855F7 50%, #EC4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #5B3DF5 0%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 50%, #EC4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism Cards & Badges */
+.glass-card {
+  background: var(--scrolly-surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--scrolly-border);
+  box-shadow: 0 20px 50px -10px rgba(20, 18, 31, 0.06);
+  border-radius: 28px;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(91, 61, 245, 0.4);
+  box-shadow: 0 25px 60px -10px rgba(91, 61, 245, 0.2);
+}
+
+.scrolly-pill {
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 1.35rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+/* Glowing Neon Buttons */
+.btn-vibrant-glow {
+  background: linear-gradient(135deg, #5B3DF5 0%, #8B5CF6 50%, #EC4899 100%);
+  color: #FFFFFF;
+  box-shadow: 0 10px 30px -5px rgba(91, 61, 245, 0.45);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-vibrant-glow:hover {
+  box-shadow: 0 15px 40px -5px rgba(236, 72, 153, 0.55);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* ========================================================================= */
+/* 4. SCENE A: 3-COLUMN CSS GRID & CRISP SOLID TROPHY CARD                  */
+/* ========================================================================= */
+.scene-a-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(1.5rem, 4vw, 4rem);
+  width: 100%;
+  position: relative;
+  z-index: 10;
+  will-change: opacity;
+}
+
+@media (max-width: 899px) {
+  .scene-a-grid {
+    grid-template-columns: 1fr;
+    row-gap: 2rem;
+    text-align: center;
+  }
+  .scene-a-col-left,
+  .scene-a-col-right {
+    text-align: center !important;
+  }
+  .scene-a-col-left .scene-subline,
+  .scene-a-col-right .scene-subline {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+  }
+  .scene-a-col-center {
+    width: 100% !important;
+    max-width: 320px !important;
+    margin: 0 auto;
+  }
+}
+
+.scene-a-col-left {
+  text-align: right;
+  z-index: 1;
+}
+
+.scene-a-col-right {
+  text-align: left;
+  z-index: 1;
+}
+
+.scene-a-headline {
+  font-size: clamp(2.5rem, min(6vw, 11vh), 6.5rem);
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  overflow-wrap: normal;
+}
+
+.scene-a-col-center {
+  width: clamp(280px, 34vw, 460px);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: clamp(380px, 55vh, 560px);
+}
+
+/* Pill list mask applied ONLY to this element */
+.pill-list-container {
+  position: absolute;
+  inset: -60px -30px;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  display: flex;
+  justify-content: center;
+}
+
+.pill-roll-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  will-change: transform;
+  width: 100%;
+}
+
+.pill-matrix-item {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 1.05rem 2.2rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(91, 61, 245, 0.35);
+  box-shadow: 0 16px 36px -6px rgba(91, 61, 245, 0.22), 0 4px 12px rgba(0, 0, 0, 0.04);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #0F172A;
+  white-space: nowrap;
+  will-change: transform, opacity;
+  /* NO CSS transition on transform/opacity to prevent double-smoothing / scroll lag */
+}
+
+:host-context(.dark) .pill-matrix-item {
+  background: rgba(15, 23, 42, 0.96);
+  border-color: rgba(168, 85, 247, 0.55);
+  color: #F8FAFC;
+  box-shadow: 0 20px 42px -6px rgba(0, 0, 0, 0.75), 0 0 30px rgba(168, 85, 247, 0.25);
+}
+
+/* Floating Win Cup Overlay (Frameless, NO solid opaque background box) */
+.scene-a-trophy-card {
+  position: relative;
+  z-index: 2;
+  width: auto;
+  max-width: none;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 1 !important;
+  overflow: visible;
+  pointer-events: none;
+}
+
+:host-context(.dark) .scene-a-trophy-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.trophy-glow-backdrop {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.4) 0%, rgba(91, 61, 245, 0.25) 45%, transparent 70%);
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.trophy-pedestal-solid {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.22)) drop-shadow(0 6px 18px rgba(245, 158, 11, 0.45));
+}
+
+.trophy-card-label {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.15rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(91, 61, 245, 0.3);
+  box-shadow: 0 10px 25px -4px rgba(91, 61, 245, 0.25);
+}
+
+:host-context(.dark) .trophy-card-label {
+  background: rgba(15, 23, 42, 0.94);
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.6);
+}
+
+/* ========================================================================= */
+/* 5. SCENE B: PINNED DARK PANEL #0E0B24 WITH PURPLE RADIAL GLOW             */
+/* ========================================================================= */
+.inset-dark-panel {
+  width: 100%;
+  max-width: 78rem;
+  background-color: #0E0B24;
+  background-image: radial-gradient(circle at 50% 25%, rgba(139, 92, 246, 0.32) 0%, rgba(14, 11, 36, 0.98) 75%);
+  border-radius: 36px;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7), 0 0 80px -10px rgba(91, 61, 245, 0.25);
+  position: relative;
+  overflow: hidden;
+  will-change: transform, opacity;
+  /* NO CSS transition on transform/opacity to prevent double-smoothing / scroll lag */
+}
+
+.dark-panel-glow {
+  position: absolute;
+  top: -25%;
+  left: 15%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.28) 0%, rgba(91, 61, 245, 0.15) 40%, transparent 70%);
+  filter: blur(75px);
+  pointer-events: none;
+}
+
+.bento-card {
+  background: rgba(20, 18, 43, 0.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  border-radius: 24px;
+  padding: 1.85rem;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 20px 40px -10px rgba(91, 61, 245, 0.35);
+}
+
+.scrolly-marquee-container {
+  overflow: hidden;
+  display: flex;
+  white-space: nowrap;
+  position: relative;
+  background: rgba(10, 8, 26, 0.85);
+  border-top: 1px solid rgba(139, 92, 246, 0.18);
+  padding: 1.25rem 0;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.scrolly-marquee-content {
+  display: flex;
+  gap: 2.5rem;
+  animation: marqueeCycle 24s linear infinite;
+  will-change: transform;
+}
+
+@keyframes marqueeCycle {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ========================================================================= */
+/* 6. SCENE C: PINNED STEP SWAP (PASTEL CARD THEMES)                         */
+/* ========================================================================= */
+.step-stage-card {
+  border-radius: 36px;
+  padding: 2.5rem;
+  min-height: 58vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 35px 80px -20px rgba(20, 18, 31, 0.15);
+  border: 1px solid var(--scrolly-border);
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .step-stage-card {
+    min-height: 60vh;
+  }
+}
+
+/* Requested Pastel Colors */
+.step-stage-0 {
+  background-color: #E4DBFF;
+  border-color: #C8B6FF;
+  box-shadow: 0 30px 70px -15px rgba(91, 61, 245, 0.25);
+}
+:host-context(.dark) .step-stage-0 {
+  background: radial-gradient(circle at 100% 0%, #231942 0%, #16102E 60%, #0E0B24 100%);
+  border-color: #5E4B8B;
+  box-shadow: 0 30px 70px -15px rgba(91, 61, 245, 0.35);
+}
+
+.step-stage-1 {
+  background-color: #FFD9E6;
+  border-color: #FFB3CC;
+  box-shadow: 0 30px 70px -15px rgba(236, 72, 153, 0.25);
+}
+:host-context(.dark) .step-stage-1 {
+  background: radial-gradient(circle at 100% 0%, #3D1322 0%, #2A0B17 60%, #0E0B24 100%);
+  border-color: #7A2242;
+  box-shadow: 0 30px 70px -15px rgba(236, 72, 153, 0.35);
+}
+
+.step-stage-2 {
+  background-color: #FFE3CC;
+  border-color: #FFC899;
+  box-shadow: 0 30px 70px -15px rgba(217, 119, 6, 0.25);
+}
+:host-context(.dark) .step-stage-2 {
+  background: radial-gradient(circle at 100% 0%, #3B210B 0%, #261405 60%, #0E0B24 100%);
+  border-color: #754015;
+  box-shadow: 0 30px 70px -15px rgba(217, 119, 6, 0.35);
+}
+
+.step-stage-3 {
+  background-color: #D6ECFF;
+  border-color: #A8D7FF;
+  box-shadow: 0 30px 70px -15px rgba(2, 132, 199, 0.25);
+}
+:host-context(.dark) .step-stage-3 {
+  background: radial-gradient(circle at 100% 0%, #0F2942 0%, #091C2E 60%, #0E0B24 100%);
+  border-color: #1E5285;
+  box-shadow: 0 30px 70px -15px rgba(2, 132, 199, 0.35);
+}
+
+.step-progress-rail {
+  width: 4px;
+  height: 140px;
+  background: rgba(20, 18, 31, 0.1);
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+}
+
+:host-context(.dark) .step-progress-rail {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.step-progress-fill {
+  width: 100%;
+  background: linear-gradient(180deg, #5B3DF5 0%, #8B5CF6 50%, #EC4899 100%);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.7);
+  transition: height 0.2s ease;
+}
+
+/* Laptop Device Mockup - Enlarge Mockup to at least 420px wide */
+.mockup-laptop-shell {
+  width: 100%;
+  min-width: 320px;
+  max-width: 680px;
+  background: #14122B;
+  border-radius: 22px 22px 0 0;
+  padding: 12px 12px 0 12px;
+  box-shadow: 0 40px 90px -20px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  position: relative;
+  transform: perspective(1200px) rotateX(2deg);
+}
+
+@media (min-width: 768px) {
+  .mockup-laptop-shell {
+    min-width: 420px;
+  }
+}
+
+.mockup-laptop-base {
+  width: 110%;
+  margin-left: -5%;
+  height: 16px;
+  background: linear-gradient(180deg, #374151 0%, #1F2937 100%);
+  border-radius: 0 0 16px 16px;
+  position: relative;
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.35);
+}
+
+.mockup-screen-viewport {
+  background: #0E0B24;
+  border-radius: 10px 10px 0 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Floating & Rotation animations */
+@keyframes scrollyFloatSoft {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes rotateContinuous {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes rotateReverseContinuous {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+@keyframes floatWobble {
+  0%, 100% { transform: translateY(0px) rotate(-6deg) scale(1); }
+  50% { transform: translateY(-12px) rotate(4deg) scale(1.04); }
+}
+
+@keyframes floatCounterWobble {
+  0%, 100% { transform: translateY(0px) rotate(5deg) scale(1); }
+  50% { transform: translateY(-10px) rotate(-4deg) scale(1.03); }
+}
+
+@keyframes pulseGlowRing {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.65; }
+  50% { transform: scale(1.06) rotate(180deg); opacity: 0.95; }
+}
+
+.scrolly-float-elem {
+  animation: scrollyFloatSoft 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-rotate-slow {
+  animation: rotateContinuous 22s linear infinite;
+  will-change: transform;
+}
+
+.animate-rotate-reverse-slow {
+  animation: rotateReverseContinuous 28s linear infinite;
+  will-change: transform;
+}
+
+.animate-rotate-gear {
+  animation: rotateContinuous 12s linear infinite;
+  will-change: transform;
+}
+
+.animate-rotate-sparkle {
+  animation: rotateReverseContinuous 16s linear infinite;
+  will-change: transform;
+}
+
+.animate-float-wobble {
+  animation: floatWobble 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-counter {
+  animation: floatCounterWobble 5.2s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlowRing 10s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Hero Companion Satellite Cards (Slide in from right with subtle degree rotation & continuous floating tilt) */
+@keyframes heroCardEnterRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(80px, -20px, 0) rotate(16deg) scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(5deg) scale(1);
+  }
+}
+
+@keyframes heroCardEnterLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(70px, 40px, 0) rotate(14deg) scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(-6deg) scale(1);
+  }
+}
+
+@keyframes heroCardSwayRight {
+  0%, 100% {
+    transform: translate3d(0, 0px, 0) rotate(5deg);
+  }
+  50% {
+    transform: translate3d(-4px, -10px, 0) rotate(8deg);
+  }
+}
+
+@keyframes heroCardSwayLeft {
+  0%, 100% {
+    transform: translate3d(0, 0px, 0) rotate(-6deg);
+  }
+  50% {
+    transform: translate3d(4px, -8px, 0) rotate(-3deg);
+  }
+}
+
+.hero-card-tilt-right {
+  animation: heroCardEnterRight 1s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             heroCardSwayRight 6s ease-in-out 1s infinite;
+  will-change: transform, opacity;
+  transform-origin: center right;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+.hero-card-tilt-right:hover {
+  transform: translate3d(-4px, -8px, 0) rotate(2deg) scale(1.04) !important;
+  box-shadow: 0 25px 60px -10px rgba(99, 102, 241, 0.5) !important;
+}
+
+.hero-card-tilt-left {
+  animation: heroCardEnterLeft 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards,
+             heroCardSwayLeft 6.5s ease-in-out 1.25s infinite;
+  will-change: transform, opacity;
+  transform-origin: center left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+.hero-card-tilt-left:hover {
+  transform: translate3d(4px, -8px, 0) rotate(-2deg) scale(1.04) !important;
+  box-shadow: 0 25px 60px -10px rgba(16, 185, 129, 0.45) !important;
+}
+
+/* FAQ Accordion expansion */
+.scrolly-faq-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scrolly-faq-body.open {
+  grid-template-rows: 1fr;
+}
+
+.scrolly-faq-content {
+  overflow: hidden;
+}
+
+/* ========================================================================= */
+/* 7. DEV-ONLY DEBUG OVERLAY HUD (?debug=1)                                  */
+/* ========================================================================= */
+.scrolly-debug-hud {
+  position: fixed;
+  top: 72px;
+  right: 16px;
+  z-index: 99999;
+  background: rgba(14, 11, 36, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 16px;
+  padding: 14px 18px;
+  color: #F5F3EE;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  max-width: 320px;
+}
+
+.scrolly-debug-hud .hud-title {
+  color: #A855F7;
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.25);
+  padding-bottom: 4px;
+}
+
+.scrolly-debug-hud .hud-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.scrolly-debug-hud .hud-val {
+  color: #38BDF8;
+  font-weight: 600;
+}
+
+/* ========================================================================= */
+/* 8. PROGRESSIVE ENHANCEMENT: CONTENT VISIBLE BY DEFAULT                    */
+/* ========================================================================= */
+/* All elements start completely visible and in normal document flow */
+.scene-sticky-inner,
+.inset-dark-panel,
+.step-stage-card,
+.step-left-content {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Under html.motion-ready, we enable smooth GPU transitions */
+html.motion-ready .inset-dark-panel {
+  will-change: transform, opacity;
+}
+
+html.motion-ready .step-stage-card,
+html.motion-ready .step-left-content {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Reduced motion kill-switch */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation: none !important;
+    transition-duration: 0.001ms !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .scrolly-marquee-content {
+    animation: none !important;
+  }
+  .mockup-laptop-shell {
+    transform: none !important;
+  }
+}
