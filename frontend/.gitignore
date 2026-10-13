@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Angular build cache
+.angular/
+
+# Build output
+dist/
+dist-mock/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db

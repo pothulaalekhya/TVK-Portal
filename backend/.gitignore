@@ -1,0 +1,23 @@
+# Maven build output
+target/
+
+# Downloaded Maven distributions (use the wrapper instead)
+apache-maven-*/
+maven.zip
+
+# Logs
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Packaged artifacts
+*.jar
+*.war
+*.ear
+
+# OS
+.DS_Store
+Thumbs.db

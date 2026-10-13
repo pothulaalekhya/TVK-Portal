@@ -8,6 +8,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.0</version>
+        <!-- relativePath empty = resolve from Maven Central, not local reactor -->
         <relativePath/>
     </parent>
 
@@ -57,16 +58,19 @@
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-            <!-- Copy Angular build output into JAR under static/ -->
+            <!-- Copy Angular build output into JAR under static/                        -->
+            <!-- Run `npm run build` in frontend/ first; skip gracefully if not built.   -->
             <resource>
-                <directory>../dist/browser</directory>
+                <directory>../frontend/dist/browser</directory>
                 <targetPath>static</targetPath>
+                <filtering>false</filtering>
             </resource>
         </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.2.0</version>
             </plugin>
         </plugins>
     </build>
