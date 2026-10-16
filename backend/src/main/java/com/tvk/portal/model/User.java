@@ -67,7 +67,7 @@ public class User {
     private String resumeFileName;
     private String resumeFileSize;
     
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String resumeData;
 
     private String paymentMode;
@@ -124,7 +124,7 @@ public class User {
     private String department;
     private String dateOfJoiningOrg;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String roleHistory; // JSON array of RoleHistoryEntry records
 
     public User() {}

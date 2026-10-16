@@ -38,4 +38,5 @@ build/
 out/
 *.class
 *.jar
+!backend/.mvn/wrapper/maven-wrapper.jar
 *.war

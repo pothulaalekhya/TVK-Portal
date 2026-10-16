@@ -13,6 +13,19 @@
   <meta name="theme-color" content="#4f46e5" />
   <base href="/" />
 
+  <!-- Theme initialiser: runs before Angular bootstrap to prevent flash of wrong theme -->
+  <script>
+    (function () {
+      var stored = localStorage.getItem('tvk_theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (stored === 'dark' || (!stored && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

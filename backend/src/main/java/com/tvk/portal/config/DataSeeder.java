@@ -126,7 +126,7 @@ public class DataSeeder implements CommandLineRunner {
         User student1 = new User();
         student1.setId("u-student1");
         student1.setName("Rahul Bose");
-        student1.setEmail("rahul.bose@gmail.com");
+        student1.setEmail("rahul.b@gmail.com");
         student1.setPassword("password123");
         student1.setRole("student");
         student1.setTrackType("job");
@@ -151,7 +151,7 @@ public class DataSeeder implements CommandLineRunner {
         User student2 = new User();
         student2.setId("u-student2");
         student2.setName("Ananya Rao");
-        student2.setEmail("ananya.rao@gmail.com");
+        student2.setEmail("ananya.r@gmail.com");
         student2.setPassword("password123");
         student2.setRole("student");
         student2.setTrackType("internship");

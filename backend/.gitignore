@@ -15,6 +15,7 @@ maven.zip
 
 # Packaged artifacts
 *.jar
+!.mvn/wrapper/maven-wrapper.jar
 *.war
 *.ear
 
